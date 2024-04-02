@@ -1,0 +1,69 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["public"]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Chats {
+  id         BigInt    @id(map: "Chat_pkey") @default(autoincrement())
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  project_id BigInt?
+  name       String    @db.VarChar
+  model_id   BigInt?
+  thread_id  String?
+  Models     Models?    @relation(fields: [model_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Messages   Messages? @relation(fields: [project_id], references: [id], onDelete: Cascade)
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Messages {
+  id         BigInt   @id(map: "messages_pkey") @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  type       String
+  content    String
+  Chats      Chats[]
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Models {
+  id             BigInt   @id @default(autoincrement())
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  name           String
+  context_window BigInt
+  Chats          Chats[]
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Profiles {
+  id                 BigInt   @id(map: "Profile_pkey") @default(autoincrement())
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  openai_api_key     String?
+  perplexity_api_key String?
+  anthropic_api_key  String?
+
+  @@schema("public")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Projects {
+  id                    BigInt   @id @default(autoincrement())
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+  name                  String
+  programming_languages String?
+  packages              String?
+  context               String?
+
+  @@schema("public")
+}
