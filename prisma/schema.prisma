@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
+  previewFeatures = ["multiSchema", "relationJoins"]
 }
 
 datasource db {
@@ -11,32 +11,34 @@ datasource db {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Chats {
-  id         BigInt    @id(map: "Chat_pkey") @default(autoincrement())
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
-  project_id BigInt?
-  name       String    @db.VarChar
-  model_id   BigInt?
+  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime   @default(now()) @db.Timestamptz(6)
+  name       String
   thread_id  String?
+  model_id   String?    @db.Uuid
+  project_id String     @db.Uuid
   Models     Models?    @relation(fields: [model_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Messages   Messages? @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  Projects   Projects   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  Messages   Messages[]
 
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Messages {
-  id         BigInt   @id(map: "messages_pkey") @default(autoincrement())
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
   type       String
   content    String
-  Chats      Chats[]
+  chat_id    String   @db.Uuid
+  Chats      Chats    @relation(fields: [chat_id], references: [id], onDelete: Cascade)
 
   @@schema("public")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Models {
-  id             BigInt   @id @default(autoincrement())
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at     DateTime @default(now()) @db.Timestamptz(6)
   name           String
   context_window BigInt
@@ -47,7 +49,7 @@ model Models {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Profiles {
-  id                 BigInt   @id(map: "Profile_pkey") @default(autoincrement())
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at         DateTime @default(now()) @db.Timestamptz(6)
   openai_api_key     String?
   perplexity_api_key String?
@@ -58,12 +60,13 @@ model Profiles {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Projects {
-  id                    BigInt   @id @default(autoincrement())
+  id                    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at            DateTime @default(now()) @db.Timestamptz(6)
   name                  String
   programming_languages String?
   packages              String?
   context               String?
+  Chats                 Chats[]
 
   @@schema("public")
 }

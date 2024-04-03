@@ -1,5 +1,6 @@
 "use client";
 // External Dependencies
+import { useParams } from "next/navigation";
 import { CircleStop, Paperclip, Send } from "lucide-react";
 import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -16,11 +17,13 @@ const ChatInput = (props: Props) => {
   const [isTyping, setIsTyping] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const { projectID, chatID } = useParams();
+
   const { mutate: sendMessage } = useMutation({
     mutationFn: async () => {
       const response = await fetch("/api/openai/send-message", {
         method: "POST",
-        body: JSON.stringify({ messages: userInput }),
+        body: JSON.stringify({ message: userInput, chatID, projectID }),
         headers: {
           "Content-Type": "application/json",
         },

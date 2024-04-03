@@ -1,6 +1,7 @@
 // External Dependencies
 import Link from "next/link";
 import { Package2 } from "lucide-react";
+import { db } from "~/server/db";
 
 // Relative Dependencies
 import ChatHeader from "./ChatHeader";
@@ -23,35 +24,23 @@ export interface IProject {
   chats: Array<IChat>;
 }
 
-const Sidebar = ({ children }: SidebarProps) => {
-  // Will need to fetch these and pass down to sidebar item
-  const projects: Array<IProject> = [
-    {
-      name: "Test Project",
-      chats: [
-        {
-          name: "Test Chat",
-          model: "Open AI",
-          id: "12345",
+const Sidebar = async ({ children }: SidebarProps) => {
+  const projects = await db.projects.findMany();
+
+  const projectsWithChats = await Promise.all(
+    projects.map(async (project) => {
+      const chats = await db.chats.findMany({
+        where: {
+          project_id: project.id,
         },
-        {
-          name: "Test Chat 2",
-          model: "Open AI",
-          id: "123456",
-        },
-      ],
-    },
-    {
-      name: "Test Project 2",
-      chats: [
-        {
-          name: "Test Chat 3",
-          model: "Open AI",
-          id: "123",
-        },
-      ],
-    },
-  ];
+      });
+
+      return {
+        ...project,
+        chats,
+      };
+    }),
+  );
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -71,8 +60,8 @@ const Sidebar = ({ children }: SidebarProps) => {
               </div>
             </nav>
             <div className="mt-4 flex w-full flex-col items-center gap-1">
-              {projects.map((project) => (
-                <SidebarProject project={project} />
+              {projectsWithChats.map((project) => (
+                <SidebarProject project={project} key={project.id} />
               ))}
             </div>
           </div>
