@@ -61,6 +61,7 @@ const CreateProjectModal = () => {
       const { project, chat } = data;
       setOpen(false);
       router.push(`/chat/${project.id}/${chat.id}`);
+      router.refresh();
     },
     onError: (error) => {
       // TODO: Handle error

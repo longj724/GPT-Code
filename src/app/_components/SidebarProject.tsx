@@ -20,12 +20,12 @@ type Props = {
 };
 
 const SidebarProject = ({ project }: Props) => {
-  const { projectID } = useParams();
+  const { projectID: projectIDParam } = useParams();
   const router = useRouter();
   const [projectOpen, setProjectOpen] = useState(false);
 
   const { mutate: createChat } = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (projectID: string) => {
       const response = await fetch("/api/openai/create-chat", {
         method: "POST",
         body: JSON.stringify({ projectID }),
@@ -38,6 +38,7 @@ const SidebarProject = ({ project }: Props) => {
     },
     onSuccess: (data) => {
       router.push(`/chat/${data.project_id}/${data.id}`);
+      router.refresh();
     },
   });
 
@@ -50,15 +51,15 @@ const SidebarProject = ({ project }: Props) => {
     // Implement handling options
   };
 
-  const handleNewChat = () => {
-    createChat();
+  const handleNewChat = (projectID: string) => {
+    createChat(projectID);
   };
 
   return (
     <div className="flex w-full flex-col items-center">
       <div
         className={cn(
-          projectID === project.id && "bg-muted",
+          projectIDParam === project.id && "bg-muted",
           "flex w-[90%] items-center gap-3 rounded-lg px-3 py-2 text-primary transition-all hover:cursor-pointer hover:bg-muted/40 hover:text-primary",
         )}
         onClick={toggleProjectOpen}
@@ -77,8 +78,11 @@ const SidebarProject = ({ project }: Props) => {
           {project.chats?.map((chat, idx) => (
             <SidebarProjectChat projectID={project.id} chat={chat} key={idx} />
           ))}
-          <div className={cn("ml-8 flex flex-row rounded-sm")}>
-            <Button className="w-full" onClick={handleNewChat}>
+          <div className={cn("ml-8 mt-1 flex flex-row rounded-sm")}>
+            <Button
+              className="w-full"
+              onClick={() => handleNewChat(project.id)}
+            >
               New Chat
               <Plus size={16} className="ml-2" />
             </Button>

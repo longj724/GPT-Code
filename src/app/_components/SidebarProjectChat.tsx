@@ -1,11 +1,12 @@
 // External Dependencies
-import { FilePenLine } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { Chats } from "@prisma/client";
 
 // Relative Dependencies
 import { cn } from "~/lib/utils";
-import { Chats } from "@prisma/client";
+import EditChatTitleModal from "./modals/EditChatTitleModal";
+import DeleteChatModal from "./modals/DeleteChatModal";
 
 type Props = {
   projectID: string;
@@ -27,11 +28,9 @@ function SidebarProjectChat({ chat, projectID }: Props) {
         className={cn("flex w-full items-center rounded-lg p-2 hover:bg-muted")}
       >
         <span>{chat.name}</span>
-        <div
-          className="ml-auto flex h-5 w-5 items-center justify-center"
-          // onClick={handleOptionsClick}/
-        >
-          <FilePenLine className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500" />
+        <div className="ml-auto flex flex-row items-center justify-center gap-1">
+          <EditChatTitleModal chatID={chat.id} />
+          <DeleteChatModal name={chat.name} chatID={chat.id} />
         </div>
       </Link>
     </div>
