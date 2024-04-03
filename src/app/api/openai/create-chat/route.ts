@@ -1,17 +1,16 @@
 // External Dependencies
 
 // Relative Dependencies
-import OpenAI from "~/lib/OpenAIClient";
 import { db } from "~/server/db";
 
 export async function POST(request: Request) {
-  const { projectID } = await request.json();
-
   try {
+    const { projectID } = await request.json();
     const response = await db.chats.create({
       data: {
         name: "Untitled",
         project_id: projectID,
+        model_id: 1,
       },
     });
 

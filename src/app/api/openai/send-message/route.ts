@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
   const model = await db.models.findUnique({
     where: {
-      id: chat?.id,
+      id: chat?.model_id as number,
     },
   });
 
