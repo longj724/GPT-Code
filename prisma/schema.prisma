@@ -67,7 +67,7 @@ model Projects {
   programming_languages String?
   packages              String?
   context               String?
-  system_prompt         String
+  system_prompt         String   @default("")
   Chats                 Chats[]
 
   @@schema("public")
