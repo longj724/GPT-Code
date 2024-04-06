@@ -28,7 +28,7 @@ const ChatHeader = (props: Props) => {
   );
 
   return (
-    <header className="flex h-14 w-full flex-row items-center justify-evenly  gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 w-full items-center justify-between border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0 md:hidden">
@@ -48,7 +48,7 @@ const ChatHeader = (props: Props) => {
           </nav>
         </SheetContent>
       </Sheet>
-      <div className="">
+      <div className="flex flex-1 justify-start">
         <Select defaultValue="GPT-3.5-Turbo">
           <SelectTrigger id="status" aria-label="Select Model">
             <SelectValue placeholder="Select Model" />
@@ -59,8 +59,8 @@ const ChatHeader = (props: Props) => {
           </SelectContent>
         </Select>
       </div>
-      <div>Project Name</div>
-      Account Button Here
+      <div className="flex flex-1 justify-center">Project Name</div>
+      <div className="flex flex-1 justify-end">Account Button Here</div>
     </header>
   );
 };
