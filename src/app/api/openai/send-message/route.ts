@@ -1,4 +1,7 @@
 // External Dependencies
+import { Messages } from "@prisma/client";
+import { encode } from "gpt-tokenizer";
+import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 // Relative Dependencies
 import OpenAI from "~/lib/OpenAIClient";
@@ -20,31 +23,102 @@ export async function POST(request: Request) {
     },
   });
 
-  const model = await db.models.findUnique({
-    where: {
-      id: chat?.model_id as number,
-    },
-  });
-
   const project = await db.projects.findUnique({
     where: {
       id: projectID,
     },
   });
 
-  // Add Project Context to new message
+  const existingMessages = await db.messages.findMany({
+    where: {
+      chat_id: chatID,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
 
-  const projectContext = "";
+  const contextWindowSize = chat?.Models?.context_window || 16385;
+  let messages: ChatCompletionMessageParam[] = [];
+  let tokensUsed = 0;
 
-  // Get context window of model being used
+  const newMessageTokens = encode(message).length;
 
-  const remainingTokens = projectContext.length;
+  tokensUsed += newMessageTokens;
 
-  // Subtract message from context window
+  if (tokensUsed > contextWindowSize) {
+    console.log("Message too long");
+    // TODO: Handle edge case when iniital message is too long
+  }
 
-  // Get all messages and order them by created at date
+  const projectSystemPromptTokens = encode(project?.system_prompt || "").length;
 
-  // Add as many previous messages as we can
+  tokensUsed += projectSystemPromptTokens;
 
-  return new Response("Hello World");
+  if (tokensUsed > contextWindowSize) {
+    console.log("Project system prompt too long");
+    // TODO: Send without system prompt or handle in some other way
+  }
+
+  messages.push({
+    role: "system",
+    content: project?.system_prompt || "",
+  });
+
+  let curMessageIndex = 0;
+  while (
+    tokensUsed < contextWindowSize &&
+    existingMessages &&
+    curMessageIndex < existingMessages.length
+  ) {
+    const nextMessage = existingMessages[curMessageIndex];
+    const nextMessageTokens = encode((nextMessage as Messages).content).length;
+
+    tokensUsed += nextMessageTokens;
+
+    if (tokensUsed > contextWindowSize) {
+      break;
+    }
+    const messageRole =
+      (nextMessage?.type as "user" | "assistant" | "system") || "user";
+
+    messages.unshift({
+      role: messageRole,
+      content: nextMessage?.content || "",
+    });
+
+    curMessageIndex++;
+  }
+
+  messages.unshift({
+    role: "user",
+    content: message,
+  });
+
+  const completion = await OpenAI.chat.completions.create({
+    model: chat?.Models?.name || "gpt-3.5-turbo",
+    messages: messages,
+  });
+
+  // Add message to database
+  await db.messages.create({
+    data: {
+      chat_id: chatID,
+      type: "user",
+      content: message,
+    },
+  });
+
+  // Add response to database
+  await db.messages.create({
+    data: {
+      chat_id: chatID,
+      type: "assistant",
+      content: completion.choices[0]?.message?.content ?? "",
+    },
+  });
+
+  return new Response(
+    JSON.stringify({ message: completion.choices[0]?.message?.content ?? "" }),
+  );
 }

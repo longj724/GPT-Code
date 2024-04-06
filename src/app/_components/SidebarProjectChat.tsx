@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { Chats } from "@prisma/client";
 
 // Relative Dependencies
-import { cn } from "~/lib/utils";
+import { cn, modelToNameMap } from "~/lib/utils";
 import EditChatTitleModal from "./modals/EditChatTitleModal";
 import DeleteChatModal from "./modals/DeleteChatModal";
 
@@ -24,7 +24,7 @@ function SidebarProjectChat({ chat, projectID }: Props) {
       )}
     >
       <Link
-        href={`/chat/${projectID}/${chat.id}`}
+        href={`/chat/${projectID}/${chat.id}?model=${modelToNameMap[chat.model_id]}`}
         className={cn("flex w-full items-center rounded-lg p-2 hover:bg-muted")}
       >
         <span>{chat.name}</span>

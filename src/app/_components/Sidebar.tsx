@@ -4,7 +4,6 @@ import { Package2 } from "lucide-react";
 import { db } from "~/server/db";
 
 // Relative Dependencies
-import ChatHeader from "./ChatHeader";
 import { ModeToggle } from "./ModeToggle";
 import SidebarProject from "./SidebarProject";
 import CreateProjectModal from "./modals/CreateProjectModal";
@@ -71,10 +70,7 @@ const Sidebar = async ({ children }: SidebarProps) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
-        <ChatHeader />
-        {children}
-      </div>
+      <div className="flex flex-col">{children}</div>
     </div>
   );
 };

@@ -3,7 +3,8 @@
 import { useParams } from "next/navigation";
 import { CircleStop, Paperclip, Send } from "lucide-react";
 import { useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Messages } from "@prisma/client";
 
 // Relative Dependencies
 import { Input } from "~/components/ui/input";
@@ -13,11 +14,12 @@ import { cn } from "~/lib/utils";
 type Props = {};
 
 const ChatInput = (props: Props) => {
+  const { projectID, chatID } = useParams();
+  const queryClient = useQueryClient();
+
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-
-  const { projectID, chatID } = useParams();
 
   const { mutate: sendMessage } = useMutation({
     mutationFn: async () => {
@@ -29,11 +31,16 @@ const ChatInput = (props: Props) => {
         },
       });
 
-      return response.json();
+      return (await response.json()) as { message: string };
     },
-    // onSuccess: (data) => {
-    //   console.log(data)
-    // },
+    onSuccess: () => {
+      setIsGenerating(false);
+      setUserInput("");
+      queryClient.invalidateQueries({ queryKey: ["chat", chatID] });
+    },
+    onError: (error) => {
+      // TODO: Display some message about handling error
+    },
   });
 
   const chatInputRef = useRef<HTMLTextAreaElement>(null);
@@ -74,7 +81,7 @@ const ChatInput = (props: Props) => {
         <TextareaAutosize
           textareaRef={chatInputRef}
           className="text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder={`Ask anything. Type "/" for prompts, "#" for files, and "!" for tools.`}
+          placeholder={`Ask anything.`}
           onValueChange={handleInputChange}
           value={userInput}
           minRows={1}
