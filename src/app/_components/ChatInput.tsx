@@ -56,7 +56,7 @@ const ChatInput = (props: Props) => {
   };
 
   return (
-    <div className="mb-6 mt-auto flex w-4/5">
+    <div className="mb-4 mt-auto flex w-4/5">
       <div className="relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2 border-input">
         <>
           <Paperclip

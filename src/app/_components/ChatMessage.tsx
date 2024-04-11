@@ -22,7 +22,7 @@ const ChatMessage = ({ message }: Props) => {
   return (
     <div
       className={cn(
-        "flex w-full flex-row items-center justify-center py-2",
+        "flex w-full flex-row items-center justify-center py-3",
         type === "user" ? "bg-muted/40" : "bg-muted",
       )}
     >
