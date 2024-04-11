@@ -70,7 +70,7 @@ const Sidebar = async ({ children }: SidebarProps) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col">{children}</div>
+      <div className="flex max-h-full flex-col">{children}</div>
     </div>
   );
 };

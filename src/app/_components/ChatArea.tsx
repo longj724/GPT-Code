@@ -10,7 +10,7 @@ type Props = {};
 
 const ChatArea = (props: Props) => {
   return (
-    <div className="flex h-full w-full flex-col items-center">
+    <div className="flex h-full max-h-screen w-full flex-col items-center">
       <ChatHeader />
       <ChatMessages />
       <ChatInput />

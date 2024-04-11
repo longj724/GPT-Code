@@ -49,15 +49,17 @@ const ChatHeader = (props: Props) => {
         </SheetContent>
       </Sheet>
       <div className="flex flex-1 justify-start">
-        <Select defaultValue="GPT-3.5-Turbo">
-          <SelectTrigger id="status" aria-label="Select Model">
-            <SelectValue placeholder="Select Model" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="GPT-3.5-Turbo">GPT-3.5-Turbo</SelectItem>
-            <SelectItem value="GPT-4-Turbo">GPT-4-Turbo</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="md:w-4/5 lg:w-2/5">
+          <Select defaultValue="GPT-3.5-Turbo">
+            <SelectTrigger id="status" aria-label="Select Model">
+              <SelectValue placeholder="Select Model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="GPT-3.5-Turbo">GPT-3.5-Turbo</SelectItem>
+              <SelectItem value="GPT-4-Turbo">GPT-4-Turbo</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
       <div className="flex flex-1 justify-center">Project Name</div>
       <div className="flex flex-1 justify-end">Account Button Here</div>
