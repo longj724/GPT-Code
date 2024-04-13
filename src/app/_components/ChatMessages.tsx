@@ -29,7 +29,7 @@ const ChatMessages = (props: Props) => {
   });
 
   return messages ? (
-    <div className="overflow-y-auto pb-1">
+    <div className="w-full overflow-y-auto pb-1">
       {messages.map((message) => (
         <ChatMessage key={message.id} message={message} />
       ))}
