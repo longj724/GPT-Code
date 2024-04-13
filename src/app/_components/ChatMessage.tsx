@@ -14,7 +14,6 @@ type Props = {
 };
 
 const ChatMessage = ({ message }: Props) => {
-  // Message will be passed down through props
   const { type, content } = message;
   const searchParams = useSearchParams();
   const model = searchParams.get("model");
@@ -44,7 +43,7 @@ const ChatMessage = ({ message }: Props) => {
             />
           </div>
         </div>
-        <p className="ml-auto w-[98%] leading-relaxed">{message.content}</p>
+        <p className="ml-auto w-[98%] leading-relaxed">{content}</p>
       </div>
     </div>
   );

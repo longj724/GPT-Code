@@ -2,20 +2,22 @@
 // External Dependencies
 import { useParams } from "next/navigation";
 import { CircleStop, Paperclip, Send } from "lucide-react";
-import { useRef, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Messages } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
 // Relative Dependencies
 import { Input } from "~/components/ui/input";
 import { TextareaAutosize } from "~/components/ui/textarea-autosize";
 import { cn } from "~/lib/utils";
 
-type Props = {};
+type Props = {
+  setMessages: Dispatch<SetStateAction<Messages[]>>;
+};
 
-const ChatInput = (props: Props) => {
+const ChatInput = ({ setMessages }: Props) => {
   const { projectID, chatID } = useParams();
-  const queryClient = useQueryClient();
 
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -31,12 +33,75 @@ const ChatInput = (props: Props) => {
         },
       });
 
-      return (await response.json()) as { message: string };
+      // UUID will be different then created on the db but I don't think it matters
+      let newUserQuestion: Messages = {
+        id: uuidv4(),
+        created_at: new Date(),
+        type: "user",
+        content: userInput,
+        chat_id: (chatID as string) ?? "",
+      };
+
+      setMessages((prev) => [...prev, newUserQuestion]);
+
+      const reader = response.body?.getReader();
+      return reader;
     },
-    onSuccess: () => {
-      setIsGenerating(false);
+    onSuccess: async (
+      data: ReadableStreamDefaultReader<Uint8Array> | undefined,
+    ) => {
       setUserInput("");
-      queryClient.invalidateQueries({ queryKey: ["chat", chatID] });
+      let newMessage: Messages = {
+        id: uuidv4(),
+        created_at: new Date(),
+        type: "assistant",
+        content: "",
+        chat_id: (chatID as string) ?? "",
+      };
+      const decoder = new TextDecoder();
+      let firstPass = true;
+
+      if (data) {
+        while (true) {
+          const { done, value } = await data.read();
+
+          if (done) {
+            break;
+          }
+
+          const decodedValue = decoder.decode(value, { stream: true });
+
+          if (value) {
+            if (firstPass) {
+              newMessage.content = decodedValue;
+              setMessages((prev) => [...prev, newMessage]);
+              firstPass = false;
+            } else {
+              setMessages((prev: Messages[]) => {
+                const existingMessages = prev.slice(0, -1);
+                const lastMessage = prev[prev.length - 1] as Messages;
+                const updatedLastMessage = {
+                  ...lastMessage,
+                  content: lastMessage.content + decodedValue,
+                };
+                return [...existingMessages, updatedLastMessage];
+              });
+            }
+          }
+        }
+      }
+
+      setIsGenerating(false);
+
+      // Add new message to database
+      // TODO: Handle error
+      await fetch("/api/openai/add-response-message", {
+        method: "POST",
+        body: JSON.stringify(newMessage),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     },
     onError: (error) => {
       // TODO: Display some message about handling error

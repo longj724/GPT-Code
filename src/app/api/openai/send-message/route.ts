@@ -2,6 +2,7 @@
 import { Messages } from "@prisma/client";
 import { encode } from "gpt-tokenizer";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 
 // Relative Dependencies
 import OpenAI from "~/lib/OpenAIClient";
@@ -98,7 +99,10 @@ export async function POST(request: Request) {
   const completion = await OpenAI.chat.completions.create({
     model: chat?.Models?.name || "gpt-3.5-turbo",
     messages: messages,
+    stream: true,
   });
+
+  const stream = OpenAIStream(completion);
 
   // Add message to database
   await db.messages.create({
@@ -110,15 +114,17 @@ export async function POST(request: Request) {
   });
 
   // Add response to database
-  await db.messages.create({
-    data: {
-      chat_id: chatID,
-      type: "assistant",
-      content: completion.choices[0]?.message?.content ?? "",
-    },
-  });
+  // await db.messages.create({
+  //   data: {
+  //     chat_id: chatID,
+  //     type: "assistant",
+  //     content: completion.choices[0]?.message?.content ?? "",
+  //   },
+  // });
 
-  return new Response(
-    JSON.stringify({ message: completion.choices[0]?.message?.content ?? "" }),
-  );
+  // return new Response(
+  //   JSON.stringify({ message: completion.choices[0]?.message?.content ?? "" }),
+  // );
+
+  return new StreamingTextResponse(stream);
 }
