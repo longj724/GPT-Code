@@ -49,7 +49,7 @@ export async function POST(request: Request) {
 
   if (tokensUsed > contextWindowSize) {
     console.log("Message too long");
-    // TODO: Handle edge case when iniital message is too long
+    // TODO: Handle edge case when message is longer than context window
   }
 
   const projectSystemPromptTokens = encode(project?.system_prompt || "").length;
@@ -60,11 +60,6 @@ export async function POST(request: Request) {
     console.log("Project system prompt too long");
     // TODO: Send without system prompt or handle in some other way
   }
-
-  messages.push({
-    role: "system",
-    content: project?.system_prompt || "",
-  });
 
   let curMessageIndex = 0;
   while (
@@ -91,7 +86,14 @@ export async function POST(request: Request) {
     curMessageIndex++;
   }
 
+  // Put system prompt at the front (this will be the first message)
   messages.unshift({
+    role: "system",
+    content: project?.system_prompt || "",
+  });
+
+  // Put user message at the back (this will be the most recent message)
+  messages.push({
     role: "user",
     content: message,
   });
@@ -112,19 +114,6 @@ export async function POST(request: Request) {
       content: message,
     },
   });
-
-  // Add response to database
-  // await db.messages.create({
-  //   data: {
-  //     chat_id: chatID,
-  //     type: "assistant",
-  //     content: completion.choices[0]?.message?.content ?? "",
-  //   },
-  // });
-
-  // return new Response(
-  //   JSON.stringify({ message: completion.choices[0]?.message?.content ?? "" }),
-  // );
 
   return new StreamingTextResponse(stream);
 }

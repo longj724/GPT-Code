@@ -13,10 +13,11 @@ import { TextareaAutosize } from "~/components/ui/textarea-autosize";
 import { cn } from "~/lib/utils";
 
 type Props = {
+  messageContainerRef: React.RefObject<HTMLDivElement>;
   setMessages: Dispatch<SetStateAction<Messages[]>>;
 };
 
-const ChatInput = ({ setMessages }: Props) => {
+const ChatInput = ({ messageContainerRef, setMessages }: Props) => {
   const { projectID, chatID } = useParams();
 
   const [userInput, setUserInput] = useState("");
@@ -32,17 +33,6 @@ const ChatInput = ({ setMessages }: Props) => {
           "Content-Type": "application/json",
         },
       });
-
-      // UUID will be different then created on the db but I don't think it matters
-      let newUserQuestion: Messages = {
-        id: uuidv4(),
-        created_at: new Date(),
-        type: "user",
-        content: userInput,
-        chat_id: (chatID as string) ?? "",
-      };
-
-      setMessages((prev) => [...prev, newUserQuestion]);
 
       const reader = response.body?.getReader();
       return reader;
@@ -70,6 +60,7 @@ const ChatInput = ({ setMessages }: Props) => {
           }
 
           const decodedValue = decoder.decode(value, { stream: true });
+          newMessage.content += decodedValue;
 
           if (value) {
             if (firstPass) {
@@ -115,9 +106,38 @@ const ChatInput = ({ setMessages }: Props) => {
     setUserInput(text);
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent<Element>) => {
+    if (e.key === "Enter" && e.shiftKey === false) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const handleSendMessage = () => {
     setIsGenerating(true);
+    updateUserMessageOptimistically();
     sendMessage();
+  };
+
+  const updateUserMessageOptimistically = () => {
+    // UUID will be different then created on the db but I don't think it matters
+    let newUserQuestion: Messages = {
+      id: uuidv4(),
+      created_at: new Date(),
+      type: "user",
+      content: userInput,
+      chat_id: (chatID as string) ?? "",
+    };
+
+    setMessages((prev) => [...prev, newUserQuestion]);
+
+    if (messageContainerRef.current) {
+      (
+        messageContainerRef as React.MutableRefObject<HTMLDivElement>
+      ).current.scrollTop = (
+        messageContainerRef as React.MutableRefObject<HTMLDivElement>
+      ).current.scrollHeight;
+    }
   };
 
   return (
@@ -151,7 +171,7 @@ const ChatInput = ({ setMessages }: Props) => {
           value={userInput}
           minRows={1}
           maxRows={18}
-          onKeyDown={() => {}}
+          onKeyDown={handleKeyPress}
           onPaste={() => {}}
           onCompositionStart={() => setIsTyping(true)}
           onCompositionEnd={() => setIsTyping(false)}

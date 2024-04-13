@@ -1,6 +1,6 @@
 "use client";
 // External Dependencies
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Messages } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ type Props = {};
 const ChatArea = (props: Props) => {
   const { chatID } = useParams();
   const [messages, setMessages] = useState<Messages[]>([]);
+  const chatMessagesRef = useRef<HTMLDivElement>(null);
 
   useQuery({
     queryKey: ["chat", chatID],
@@ -36,8 +37,11 @@ const ChatArea = (props: Props) => {
   return (
     <div className="flex h-full max-h-screen w-full flex-col items-center">
       <ChatHeader />
-      <ChatMessages messages={messages} />
-      <ChatInput setMessages={setMessages} />
+      <ChatMessages messages={messages} ref={chatMessagesRef} />
+      <ChatInput
+        setMessages={setMessages}
+        messageContainerRef={chatMessagesRef}
+      />
     </div>
   );
 };

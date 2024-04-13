@@ -1,6 +1,6 @@
 "use client";
 // External Dependencies
-import React from "react";
+import { forwardRef, useEffect } from "react";
 import { Messages } from "@prisma/client";
 
 // Relative Dependencies
@@ -10,16 +10,26 @@ type Props = {
   messages: Messages[];
 };
 
-const ChatMessages = ({ messages }: Props) => {
-  return messages.length > 0 ? (
-    <div className="w-full overflow-y-auto pb-1">
-      {messages.map((message) => (
-        <ChatMessage key={message.id} message={message} />
-      ))}
+const ChatMessages = forwardRef<HTMLDivElement, Props>(({ messages }, ref) => {
+  useEffect(() => {
+    if (ref !== null) {
+      (ref as React.MutableRefObject<HTMLDivElement>).current.scrollTop = (
+        ref as React.MutableRefObject<HTMLDivElement>
+      ).current.scrollHeight;
+    }
+  }, [messages]);
+
+  return (
+    <div className="w-full overflow-y-auto pb-1" ref={ref}>
+      {messages.length > 0 ? (
+        messages.map((message) => (
+          <ChatMessage key={message.id} message={message} />
+        ))
+      ) : (
+        <div>No messages</div>
+      )}
     </div>
-  ) : (
-    <div>No messages</div>
   );
-};
+});
 
 export default ChatMessages;
