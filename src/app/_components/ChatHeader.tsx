@@ -1,31 +1,20 @@
 "use client";
 // Exteral Dependencies
-import { useState } from "react";
 import { Menu, Package2 } from "lucide-react";
 import Link from "next/link";
-import { useParams, useSearchParams } from "next/navigation";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "~/components/ui/select";
 
-type Props = {};
+type Props = {
+  showSelectedModel: boolean;
+};
 
-const ChatHeader = (props: Props) => {
-  const { projectID, chatID } = useParams();
+const ChatHeader = ({ showSelectedModel }: Props) => {
   const searchParams = useSearchParams();
   const model = searchParams.get("model");
-  const [selectedModel, setSelectedModel] = useState<string>(
-    model || "GPT-3.5-Turbo",
-  );
 
   return (
     <header className="lg:px flex h-14 min-h-[3.5rem] w-full items-center justify-between border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -50,15 +39,7 @@ const ChatHeader = (props: Props) => {
       </Sheet>
       <div className="flex w-full flex-1 justify-start">
         <div className="md:w-4/5 lg:w-3/5">
-          <Select defaultValue="GPT-3.5-Turbo">
-            <SelectTrigger id="status" aria-label="Select Model">
-              <SelectValue placeholder="Select Model" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="GPT-3.5-Turbo">GPT-3.5-Turbo</SelectItem>
-              <SelectItem value="GPT-4-Turbo">GPT-4-Turbo</SelectItem>
-            </SelectContent>
-          </Select>
+          {showSelectedModel && <h1>{model}</h1>}
         </div>
       </div>
       <div className="flex flex-1 justify-center">Project Name</div>

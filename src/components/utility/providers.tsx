@@ -7,6 +7,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { FC } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import NextAdapterApp from "next-query-params/app";
+import { QueryParamProvider } from "use-query-params";
 
 export const Providers: FC<ThemeProviderProps> = ({ children, ...props }) => {
   const [queryClient] = useState(() => new QueryClient());
@@ -15,7 +17,9 @@ export const Providers: FC<ThemeProviderProps> = ({ children, ...props }) => {
     <NextThemesProvider {...props}>
       <TooltipProvider>
         <QueryClientProvider client={queryClient}>
-          {children}
+          <QueryParamProvider adapter={NextAdapterApp}>
+            {children}
+          </QueryParamProvider>
         </QueryClientProvider>
       </TooltipProvider>
     </NextThemesProvider>

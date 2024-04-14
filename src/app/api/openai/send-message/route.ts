@@ -7,14 +7,15 @@ import { OpenAIStream, StreamingTextResponse } from "ai";
 // Relative Dependencies
 import OpenAI from "~/lib/OpenAIClient";
 import { db } from "~/server/db";
+import { modelDisplayNameToNameMap, modelNameToIDMap } from "~/lib/utils";
 
 // For GPT 3.5 assistant
 const ASSISTANT_ID = "asst_6H3IY3PbORjy4s1mqb9mr4C1";
 
 export async function POST(request: Request) {
-  // New Message
-  const { message, chatID, projectID } = await request.json();
+  const { message, model, chatID, projectID } = await request.json();
 
+  // Can probably make this more efficient to not udpate a chat and then fetch it again
   const chat = await db.chats.findUnique({
     where: {
       id: chatID,
@@ -23,6 +24,18 @@ export async function POST(request: Request) {
       Models: true,
     },
   });
+
+  if (chat?.model_id !== modelNameToIDMap[model]) {
+    console.log("updating model");
+    await db.chats.update({
+      where: {
+        id: chatID,
+      },
+      data: {
+        model_id: modelNameToIDMap[model],
+      },
+    });
+  }
 
   const project = await db.projects.findUnique({
     where: {
@@ -99,7 +112,7 @@ export async function POST(request: Request) {
   });
 
   const completion = await OpenAI.chat.completions.create({
-    model: chat?.Models?.name || "gpt-3.5-turbo",
+    model: modelDisplayNameToNameMap[model] || "gpt-3.5-turbo",
     messages: messages,
     stream: true,
   });

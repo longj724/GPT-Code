@@ -1,6 +1,6 @@
 "use client";
 // External Dependencies
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { CircleStop, Paperclip, Send } from "lucide-react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -13,12 +13,22 @@ import { TextareaAutosize } from "~/components/ui/textarea-autosize";
 import { cn } from "~/lib/utils";
 
 type Props = {
+  changedModel: boolean;
   messageContainerRef: React.RefObject<HTMLDivElement>;
-  setMessages: Dispatch<SetStateAction<Messages[]>>;
+  setChangedModel: Dispatch<SetStateAction<boolean>>;
+  setMessages: Dispatch<SetStateAction<Messages[] | null>>;
 };
 
-const ChatInput = ({ messageContainerRef, setMessages }: Props) => {
+const ChatInput = ({
+  changedModel,
+  messageContainerRef,
+  setChangedModel,
+  setMessages,
+}: Props) => {
+  const router = useRouter();
   const { projectID, chatID } = useParams();
+  const searchParams = useSearchParams();
+  const model = searchParams.get("model");
 
   const [userInput, setUserInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -28,7 +38,12 @@ const ChatInput = ({ messageContainerRef, setMessages }: Props) => {
     mutationFn: async () => {
       const response = await fetch("/api/openai/send-message", {
         method: "POST",
-        body: JSON.stringify({ message: userInput, chatID, projectID }),
+        body: JSON.stringify({
+          message: userInput,
+          chatID,
+          projectID,
+          model,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -65,17 +80,20 @@ const ChatInput = ({ messageContainerRef, setMessages }: Props) => {
           if (value) {
             if (firstPass) {
               newMessage.content = decodedValue;
-              setMessages((prev) => [...prev, newMessage]);
+              setMessages((prev) => [...(prev as Messages[]), newMessage]);
               firstPass = false;
             } else {
-              setMessages((prev: Messages[]) => {
-                const existingMessages = prev.slice(0, -1);
-                const lastMessage = prev[prev.length - 1] as Messages;
-                const updatedLastMessage = {
-                  ...lastMessage,
-                  content: lastMessage.content + decodedValue,
-                };
-                return [...existingMessages, updatedLastMessage];
+              setMessages((prev: Messages[] | null) => {
+                if (prev) {
+                  const existingMessages = prev.slice(0, -1);
+                  const lastMessage = prev[prev.length - 1] as Messages;
+                  const updatedLastMessage = {
+                    ...lastMessage,
+                    content: lastMessage.content + decodedValue,
+                  };
+                  return [...existingMessages, updatedLastMessage];
+                }
+                return prev;
               });
             }
           }
@@ -93,6 +111,11 @@ const ChatInput = ({ messageContainerRef, setMessages }: Props) => {
           "Content-Type": "application/json",
         },
       });
+
+      if (changedModel) {
+        setChangedModel(false);
+        router.refresh();
+      }
     },
     onError: (error) => {
       // TODO: Display some message about handling error
@@ -129,7 +152,7 @@ const ChatInput = ({ messageContainerRef, setMessages }: Props) => {
       chat_id: (chatID as string) ?? "",
     };
 
-    setMessages((prev) => [...prev, newUserQuestion]);
+    setMessages((prev) => [...(prev as Messages[]), newUserQuestion]);
 
     if (messageContainerRef.current) {
       (

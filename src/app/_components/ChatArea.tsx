@@ -14,8 +14,9 @@ type Props = {};
 
 const ChatArea = (props: Props) => {
   const { chatID } = useParams();
-  const [messages, setMessages] = useState<Messages[]>([]);
+  const [messages, setMessages] = useState<Messages[] | null>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
+  const [changedModel, setChangedModel] = useState<boolean>(false);
 
   useQuery({
     queryKey: ["chat", chatID],
@@ -36,11 +37,19 @@ const ChatArea = (props: Props) => {
 
   return (
     <div className="flex h-full max-h-screen w-full flex-col items-center">
-      <ChatHeader />
-      <ChatMessages messages={messages} ref={chatMessagesRef} />
+      <ChatHeader
+        showSelectedModel={messages !== null && messages?.length !== 0}
+      />
+      <ChatMessages
+        messages={messages}
+        ref={chatMessagesRef}
+        setChangedModel={setChangedModel}
+      />
       <ChatInput
-        setMessages={setMessages}
+        changedModel={changedModel}
         messageContainerRef={chatMessagesRef}
+        setChangedModel={setChangedModel}
+        setMessages={setMessages}
       />
     </div>
   );
