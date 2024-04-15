@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 
 // Relative Dependencies
+import MessageMarkdown from "./MessageMarkdown";
 import { cn } from "~/lib/utils";
 import { WithTooltip } from "~/components/ui/with-tooltip";
 
@@ -43,7 +44,8 @@ const ChatMessage = ({ message }: Props) => {
             />
           </div>
         </div>
-        <p className="ml-auto w-[98%] leading-relaxed">{content}</p>
+        {/* <p className="ml-auto w-[98%] leading-relaxed">{content}</p> */}
+        <MessageMarkdown content={content} />
       </div>
     </div>
   );
