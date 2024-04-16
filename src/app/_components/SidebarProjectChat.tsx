@@ -7,6 +7,7 @@ import { Chats } from "@prisma/client";
 import { cn, modelToNameMap } from "~/lib/utils";
 import EditChatTitleModal from "./modals/EditChatTitleModal";
 import DeleteChatModal from "./modals/DeleteChatModal";
+import { WithTooltip } from "~/components/ui/with-tooltip";
 
 type Props = {
   projectID: string;
@@ -29,8 +30,22 @@ function SidebarProjectChat({ chat, projectID }: Props) {
       >
         <span>{chat.name}</span>
         <div className="ml-auto flex flex-row items-center justify-center gap-1">
-          <EditChatTitleModal chatID={chat.id} />
-          <DeleteChatModal name={chat.name} chatID={chat.id} />
+          <WithTooltip
+            delayDuration={200}
+            display={<p>Edit Title</p>}
+            side="top"
+            trigger={<EditChatTitleModal chatID={chat.id} />}
+          />
+          <WithTooltip
+            delayDuration={200}
+            display={<p>Delete</p>}
+            side="top"
+            trigger={
+              <div>
+                <DeleteChatModal name={chat.name} chatID={chat.id} />
+              </div>
+            }
+          />
         </div>
       </Link>
     </div>

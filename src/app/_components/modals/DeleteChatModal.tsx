@@ -52,7 +52,7 @@ const DeleteChatModal = ({ chatID, name }: Props) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger className="flex">
         <Trash2
           className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
           size={20}
