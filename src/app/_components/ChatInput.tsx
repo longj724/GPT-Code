@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 // Relative Dependencies
 import { Input } from "~/components/ui/input";
 import { TextareaAutosize } from "~/components/ui/textarea-autosize";
+import MessagePromptsMenu from "./MessagePromptsMenu";
 import { cn } from "~/lib/utils";
 
 type Props = {
@@ -35,11 +36,11 @@ const ChatInput = ({
   const [isGenerating, setIsGenerating] = useState(false);
 
   const { mutate: sendMessage } = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (message?: string) => {
       const response = await fetch("/api/openai/send-message", {
         method: "POST",
         body: JSON.stringify({
-          message: userInput,
+          message: message || userInput,
           chatID,
           projectID,
           model,
@@ -139,7 +140,18 @@ const ChatInput = ({
   const handleSendMessage = () => {
     setIsGenerating(true);
     updateUserMessageOptimistically();
-    sendMessage();
+    sendMessage(userInput);
+  };
+
+  const handleSendMessageWithPrompt = (prompt: string) => {
+    setIsGenerating(true);
+    updateUserMessageOptimistically();
+    const message = createMessageWithPrompt(prompt);
+    sendMessage(message);
+  };
+
+  const createMessageWithPrompt = (prompt: string) => {
+    return "";
   };
 
   const updateUserMessageOptimistically = () => {
@@ -200,7 +212,7 @@ const ChatInput = ({
           onCompositionEnd={() => setIsTyping(false)}
         />
 
-        <div className="absolute bottom-[14px] right-3 cursor-pointer hover:opacity-50">
+        <div className="absolute bottom-[14px] right-3 flex cursor-pointer flex-row gap-1">
           {isGenerating ? (
             <CircleStop
               className="animate-pulse rounded bg-transparent p-1 hover:bg-background"
@@ -210,13 +222,17 @@ const ChatInput = ({
           ) : (
             <Send
               className={cn(
-                "rounded bg-primary p-1 text-secondary",
+                "rounded bg-primary p-1 text-secondary hover:opacity-50",
                 !userInput && "cursor-not-allowed opacity-50",
               )}
               onClick={handleSendMessage}
               size={30}
             />
           )}
+          <MessagePromptsMenu
+            userInput={userInput}
+            sendMessageWithPrompt={handleSendMessageWithPrompt}
+          />
         </div>
       </div>
     </div>
