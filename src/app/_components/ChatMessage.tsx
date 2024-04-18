@@ -1,6 +1,6 @@
 "use client";
 // External Dependencies
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { Messages } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -9,6 +9,7 @@ import Image from "next/image";
 import MessageMarkdown from "./MessageMarkdown";
 import { cn } from "~/lib/utils";
 import { WithTooltip } from "~/components/ui/with-tooltip";
+import { useCopyToClipboard } from "~/lib/hooks/useCopyToClipboard";
 
 type Props = {
   message: Messages;
@@ -18,6 +19,13 @@ const ChatMessage = ({ message }: Props) => {
   const { type, content } = message;
   const searchParams = useSearchParams();
   const model = searchParams.get("model");
+
+  const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
+
+  const onCopy = () => {
+    if (isCopied) return;
+    copyToClipboard(content);
+  };
 
   return (
     <div
@@ -40,11 +48,20 @@ const ChatMessage = ({ message }: Props) => {
               delayDuration={200}
               display={<p>Copy</p>}
               side="top"
-              trigger={<Copy size={18} />}
+              trigger={
+                isCopied ? (
+                  <Check size={18} className="text-gray-500" />
+                ) : (
+                  <Copy
+                    size={18}
+                    onClick={onCopy}
+                    className="hover:text-gray-500"
+                  />
+                )
+              }
             />
           </div>
         </div>
-        {/* <p className="ml-auto w-[98%] leading-relaxed">{content}</p> */}
         <MessageMarkdown content={content} />
       </div>
     </div>
