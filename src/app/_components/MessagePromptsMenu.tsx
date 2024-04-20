@@ -1,5 +1,6 @@
 // External Dependencies
-import { ChevronUp, Send } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ChevronUp, FilePenLine, Send, SquarePlus } from "lucide-react";
 
 // Relative Dependencies
 import {
@@ -19,9 +20,21 @@ type Props = {
 };
 
 const MessagePromptsMenu = ({ userInput }: Props) => {
-  const handleSendPrompt = (prompt: string) => {
-    console.log("prompt is", prompt);
+  const [isCreatePromptOpen, setIsCreatePromptOpen] = useState(false);
+  const [isEditPromptOpen, setIsEditPromptOpen] = useState(false);
+  const [selectedPromptToEdit, setSelectedPromptToEdit] = useState<string>("");
+
+  const handleSendPrompt = (prompt: string) => {};
+
+  const handleEditPrompt = (prompt: string) => {
+    setSelectedPromptToEdit(prompt);
   };
+
+  useEffect(() => {
+    if (selectedPromptToEdit !== "") {
+      setIsEditPromptOpen(true);
+    }
+  }, [selectedPromptToEdit]);
 
   return (
     <>
@@ -47,7 +60,16 @@ const MessagePromptsMenu = ({ userInput }: Props) => {
                 onClick={() => handleSendPrompt("Explain this error")}
                 size={22}
               />
-              <EditPromptModal existingPrompt={"Explain this error"} />
+              <div
+                className="flex flex-row items-center gap-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FilePenLine
+                  size={22}
+                  className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
+                  onClick={() => handleEditPrompt("Explain this error")}
+                />
+              </div>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -61,7 +83,18 @@ const MessagePromptsMenu = ({ userInput }: Props) => {
                 onClick={() => handleSendPrompt("Explain these lines of code")}
                 size={22}
               />
-              <EditPromptModal existingPrompt={"Explain these lines of code"} />
+              <div
+                className="flex flex-row items-center gap-2"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <FilePenLine
+                  size={22}
+                  className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
+                  onClick={() =>
+                    handleEditPrompt("Explain these lines of code")
+                  }
+                />
+              </div>
             </div>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -69,10 +102,28 @@ const MessagePromptsMenu = ({ userInput }: Props) => {
             className="hover:cursor-pointer"
             onSelect={(e) => e.preventDefault()}
           >
-            <CreatePromptModal />
+            <div className="flex w-full flex-row items-center gap-2">
+              <p>Create Prompt</p>
+              <SquarePlus
+                size={22}
+                className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
+                onClick={() => setIsCreatePromptOpen(true)}
+              />
+            </div>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {/* Render Modals here */}
+      <CreatePromptModal
+        open={isCreatePromptOpen}
+        setOpen={setIsCreatePromptOpen}
+      />
+      <EditPromptModal
+        existingPrompt={selectedPromptToEdit}
+        isOpen={isEditPromptOpen}
+        setIsOpen={setIsEditPromptOpen}
+      />
     </>
   );
 };

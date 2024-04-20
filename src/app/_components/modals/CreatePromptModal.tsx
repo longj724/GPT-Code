@@ -1,9 +1,8 @@
 "use client";
 // External Dependencies
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Chats } from "@prisma/client";
-import { SquarePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 // Relative Dependencies
@@ -14,16 +13,17 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogTrigger,
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
 
-type Props = {};
+type Props = {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
 
-const CreatePromptModal = (props: Props) => {
+const CreatePromptModal = ({ open, setOpen }: Props) => {
   const router = useRouter();
-  const [open, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
 
   const { mutate: createPrompt } = useMutation({
@@ -39,7 +39,7 @@ const CreatePromptModal = (props: Props) => {
       return (await response.json()) as Chats;
     },
     onSuccess: () => {
-      setIsOpen(false);
+      setOpen(false);
       router.refresh();
     },
     onError: (error) => {
@@ -60,16 +60,7 @@ const CreatePromptModal = (props: Props) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <div className="flex w-full flex-row items-center gap-2">
-          <p>Create Prompt</p>
-          <SquarePlus
-            size={22}
-            className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-          />
-        </div>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="w-1/2 sm:w-3/5">
         <DialogHeader>
           <DialogTitle className="mb-4">Create Prompt</DialogTitle>
