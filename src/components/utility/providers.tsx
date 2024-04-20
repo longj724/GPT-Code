@@ -9,19 +9,22 @@ import { FC } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NextAdapterApp from "next-query-params/app";
 import { QueryParamProvider } from "use-query-params";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const Providers: FC<ThemeProviderProps> = ({ children, ...props }) => {
   const [queryClient] = useState(() => new QueryClient());
 
   return (
-    <NextThemesProvider {...props}>
-      <TooltipProvider>
-        <QueryClientProvider client={queryClient}>
-          <QueryParamProvider adapter={NextAdapterApp}>
-            {children}
-          </QueryParamProvider>
-        </QueryClientProvider>
-      </TooltipProvider>
-    </NextThemesProvider>
+    <ClerkProvider>
+      <NextThemesProvider {...props}>
+        <TooltipProvider>
+          <QueryClientProvider client={queryClient}>
+            <QueryParamProvider adapter={NextAdapterApp}>
+              {children}
+            </QueryParamProvider>
+          </QueryClientProvider>
+        </TooltipProvider>
+      </NextThemesProvider>
+    </ClerkProvider>
   );
 };

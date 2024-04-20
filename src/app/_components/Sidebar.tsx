@@ -2,11 +2,14 @@
 import Link from "next/link";
 import { Package2 } from "lucide-react";
 import { db } from "~/server/db";
+import { currentUser } from "@clerk/nextjs";
 
 // Relative Dependencies
 import { ModeToggle } from "./ModeToggle";
 import SidebarProject from "./SidebarProject";
 import CreateProjectModal from "./modals/CreateProjectModal";
+import { cn } from "~/lib/utils";
+import Profile from "./Profile";
 
 export type SidebarProps = {
   children: React.ReactNode;
@@ -24,6 +27,8 @@ export interface IProject {
 }
 
 const Sidebar = async ({ children }: SidebarProps) => {
+  const user = await currentUser();
+
   const projects = await db.projects.findMany();
 
   const projectsWithChats = await Promise.all(
@@ -51,26 +56,39 @@ const Sidebar = async ({ children }: SidebarProps) => {
               <span className="">Code GPT</span>
             </Link>
           </div>
-          <div className="flex flex-1 flex-col items-center">
-            <nav className="mb-2 w-full">
-              <div className="flex flex-row items-center">
-                <h1 className="ml-4 text-xl">Projects</h1>
-                <CreateProjectModal />
-              </div>
-            </nav>
-            <div className="mt-4 flex w-full flex-col items-center gap-1">
-              {projectsWithChats.map((project) => (
-                <SidebarProject project={project} key={project.id} />
-              ))}
-            </div>
-          </div>
 
-          <div className="mb-4 ml-4 align-bottom">
+          {user ? (
+            <div className="flex flex-1 flex-col items-center">
+              <nav className="mb-2 w-full">
+                <div className="flex flex-row items-center">
+                  <h1 className="ml-4 text-xl">Projects</h1>
+                  <CreateProjectModal />
+                </div>
+              </nav>
+              <div className="mt-4 flex w-full flex-col items-center gap-1">
+                {projectsWithChats.map((project) => (
+                  <SidebarProject project={project} key={project.id} />
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="flex-1"></div>
+          )}
+
+          <div className="mb-4 ml-4 flex flex-row items-center gap-1 align-bottom">
             <ModeToggle />
+            {user && <Profile />}
           </div>
         </div>
       </div>
-      <div className="flex max-h-full flex-col">{children}</div>
+      <div
+        className={cn(
+          "flex max-h-full flex-col",
+          !user && "items-center justify-center",
+        )}
+      >
+        {children}
+      </div>
     </div>
   );
 };
