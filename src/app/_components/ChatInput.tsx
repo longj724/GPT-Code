@@ -146,12 +146,8 @@ const ChatInput = ({
   const handleSendMessageWithPrompt = (prompt: string) => {
     setIsGenerating(true);
     updateUserMessageOptimistically();
-    const message = createMessageWithPrompt(prompt);
+    const message = `${prompt}: ${userInput}`;
     sendMessage(message);
-  };
-
-  const createMessageWithPrompt = (prompt: string) => {
-    return "";
   };
 
   const updateUserMessageOptimistically = () => {

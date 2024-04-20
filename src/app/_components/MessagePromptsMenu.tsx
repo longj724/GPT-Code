@@ -19,12 +19,10 @@ type Props = {
   userInput: string;
 };
 
-const MessagePromptsMenu = ({ userInput }: Props) => {
+const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
   const [isCreatePromptOpen, setIsCreatePromptOpen] = useState(false);
   const [isEditPromptOpen, setIsEditPromptOpen] = useState(false);
   const [selectedPromptToEdit, setSelectedPromptToEdit] = useState<string>("");
-
-  const handleSendPrompt = (prompt: string) => {};
 
   const handleEditPrompt = (prompt: string) => {
     setSelectedPromptToEdit(prompt);
@@ -57,7 +55,7 @@ const MessagePromptsMenu = ({ userInput }: Props) => {
               <p>Explain this error</p>
               <Send
                 className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-                onClick={() => handleSendPrompt("Explain this error")}
+                onClick={() => sendMessageWithPrompt("Explain this error")}
                 size={22}
               />
               <div
@@ -80,7 +78,9 @@ const MessagePromptsMenu = ({ userInput }: Props) => {
               <p>Explain these lines of code</p>
               <Send
                 className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-                onClick={() => handleSendPrompt("Explain these lines of code")}
+                onClick={() =>
+                  sendMessageWithPrompt("Explain these lines of code")
+                }
                 size={22}
               />
               <div
