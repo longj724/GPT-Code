@@ -49,12 +49,13 @@ model Models {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model Profiles {
-  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model Users {
+  id                 String   @id 
   created_at         DateTime @default(now()) @db.Timestamptz(6)
   openai_api_key     String?
   perplexity_api_key String?
   anthropic_api_key  String?
+  Projects           Projects[]
 
   @@schema("public")
 }
@@ -69,6 +70,9 @@ model Projects {
   context               String?
   system_prompt         String   @default("")
   Chats                 Chats[]
+  user_id               String   
+  Users                 Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  
 
   @@schema("public")
 }

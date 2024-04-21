@@ -29,7 +29,11 @@ export interface IProject {
 const Sidebar = async ({ children }: SidebarProps) => {
   const user = await currentUser();
 
-  const projects = await db.projects.findMany();
+  const projects = await db.projects.findMany({
+    where: {
+      user_id: user?.id,
+    },
+  });
 
   const projectsWithChats = await Promise.all(
     projects.map(async (project) => {

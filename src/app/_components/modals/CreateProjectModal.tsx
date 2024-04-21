@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useUser } from "@clerk/nextjs";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
@@ -44,13 +45,15 @@ type CreateNewProjectResponse = {
 };
 
 const CreateProjectModal = () => {
-  const [open, setOpen] = useState(false);
   const router = useRouter();
+  const { user } = useUser();
+  const [open, setOpen] = useState(false);
+
   const { mutate: createProject } = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       const response = await fetch("/api/create-project", {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, userID: user?.id }),
         headers: {
           "Content-Type": "application/json",
         },

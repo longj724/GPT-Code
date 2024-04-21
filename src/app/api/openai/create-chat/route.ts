@@ -6,6 +6,7 @@ import { db } from "~/server/db";
 export async function POST(request: Request) {
   try {
     const { projectID } = await request.json();
+
     const response = await db.chats.create({
       data: {
         name: "Untitled",

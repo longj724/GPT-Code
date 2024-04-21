@@ -7,7 +7,6 @@ import { Button } from "~/components/ui/button";
 
 const NoChatSelected = async () => {
   const user = await currentUser();
-  console.log("browns", user);
 
   return !user ? (
     <div className="flex flex-col items-center justify-center gap-6">

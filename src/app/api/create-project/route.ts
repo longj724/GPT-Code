@@ -5,8 +5,10 @@ import { db } from "~/server/db";
 
 export async function POST(request: Request) {
   try {
-    const { name, programmingLanguages, packages, context } =
+    const { name, programmingLanguages, packages, context, userID } =
       await request.json();
+
+    // TODO: Check if userID is valid
 
     let systemPrompt = `
     You are an AI assistant that is helping a software engineer with programming tasks. Engineers will ask you questions 
@@ -23,6 +25,7 @@ export async function POST(request: Request) {
 
     const projectResponse = await db.projects.create({
       data: {
+        user_id: userID,
         name,
         programming_languages: programmingLanguages,
         packages,

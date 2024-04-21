@@ -43,7 +43,7 @@ const ChatHeader = ({ showSelectedModel }: Props) => {
         </div>
       </div>
       <div className="flex flex-1 justify-center">Project Name</div>
-      <div className="flex flex-1 justify-end">Account Button Here</div>
+      <div className="flex flex-1 justify-end"></div>
     </header>
   );
 };
