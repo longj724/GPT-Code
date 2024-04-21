@@ -1,7 +1,7 @@
 "use client";
 // External Dependencies
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Chats } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
@@ -20,11 +20,20 @@ import { Input } from "~/components/ui/input";
 type Props = {
   existingPrompt: string;
   isOpen: boolean;
+  promptID: string;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
+  userID: string;
 };
 
-const EditPromptModal = ({ existingPrompt, isOpen, setIsOpen }: Props) => {
+const EditPromptModal = ({
+  existingPrompt,
+  isOpen,
+  promptID,
+  setIsOpen,
+  userID,
+}: Props) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState("");
 
   useEffect(() => {
@@ -35,7 +44,7 @@ const EditPromptModal = ({ existingPrompt, isOpen, setIsOpen }: Props) => {
     mutationFn: async () => {
       const response = await fetch("/api/user/edit-prompt", {
         method: "POST",
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ content: prompt, promptID }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,6 +53,7 @@ const EditPromptModal = ({ existingPrompt, isOpen, setIsOpen }: Props) => {
       return (await response.json()) as Chats;
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["prompts", userID] });
       setIsOpen(false);
       router.refresh();
     },

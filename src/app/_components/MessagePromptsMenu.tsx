@@ -1,6 +1,9 @@
 // External Dependencies
 import { useEffect, useState } from "react";
 import { ChevronUp, FilePenLine, Send, SquarePlus } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useUser } from "@clerk/nextjs";
+import { Prompts } from "@prisma/client";
 
 // Relative Dependencies
 import {
@@ -20,9 +23,28 @@ type Props = {
 };
 
 const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
+  const { user } = useUser();
   const [isCreatePromptOpen, setIsCreatePromptOpen] = useState(false);
   const [isEditPromptOpen, setIsEditPromptOpen] = useState(false);
   const [selectedPromptToEdit, setSelectedPromptToEdit] = useState<string>("");
+
+  const { data: prompts } = useQuery({
+    queryKey: ["prompts", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const response = await fetch(
+        `/api/user/get-prompts?user_id=${user?.id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      return (await response.json()).prompts as Prompts[];
+    },
+  });
 
   const handleEditPrompt = (prompt: string) => {
     setSelectedPromptToEdit(prompt);
@@ -47,56 +69,31 @@ const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="hover:cursor-pointer"
-            onSelect={(e) => e.preventDefault()}
-          >
-            <div className="flex w-full flex-row items-center gap-2">
-              <p>Explain this error</p>
-              <Send
-                className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-                onClick={() => sendMessageWithPrompt("Explain this error")}
-                size={22}
-              />
-              <div
-                className="flex flex-row items-center gap-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <FilePenLine
-                  size={22}
+          {prompts?.map(({ content }) => (
+            <DropdownMenuItem
+              className="hover:cursor-pointer"
+              onSelect={(e) => e.preventDefault()}
+            >
+              <div className="flex w-full flex-row items-center gap-2">
+                <p>{content}</p>
+                <Send
                   className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-                  onClick={() => handleEditPrompt("Explain this error")}
-                />
-              </div>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="hover:cursor-pointer"
-            onSelect={(e) => e.preventDefault()}
-          >
-            <div className="flex w-full flex-row items-center gap-2">
-              <p>Explain these lines of code</p>
-              <Send
-                className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-                onClick={() =>
-                  sendMessageWithPrompt("Explain these lines of code")
-                }
-                size={22}
-              />
-              <div
-                className="flex flex-row items-center gap-2"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <FilePenLine
+                  onClick={() => sendMessageWithPrompt(content)}
                   size={22}
-                  className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
-                  onClick={() =>
-                    handleEditPrompt("Explain these lines of code")
-                  }
                 />
+                <div
+                  className="flex flex-row items-center gap-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <FilePenLine
+                    size={22}
+                    className="hover:pointer rounded-sm p-[3px] hover:bg-gray-500"
+                    onClick={() => handleEditPrompt(content)}
+                  />
+                </div>
               </div>
-            </div>
-          </DropdownMenuItem>
+            </DropdownMenuItem>
+          ))}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="hover:cursor-pointer"
@@ -118,12 +115,17 @@ const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
       <CreatePromptModal
         open={isCreatePromptOpen}
         setOpen={setIsCreatePromptOpen}
+        userID={user?.id as string}
       />
-      <EditPromptModal
-        existingPrompt={selectedPromptToEdit}
-        isOpen={isEditPromptOpen}
-        setIsOpen={setIsEditPromptOpen}
-      />
+      {prompts?.map(({ id }) => (
+        <EditPromptModal
+          existingPrompt={selectedPromptToEdit}
+          isOpen={isEditPromptOpen}
+          promptID={id}
+          setIsOpen={setIsEditPromptOpen}
+          userID={user?.id as string}
+        />
+      ))}
     </>
   );
 };

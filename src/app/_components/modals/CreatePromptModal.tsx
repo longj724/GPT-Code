@@ -1,8 +1,8 @@
 "use client";
 // External Dependencies
 import { useState, Dispatch, SetStateAction } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { Chats } from "@prisma/client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Prompts } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 // Relative Dependencies
@@ -20,26 +20,29 @@ import { Input } from "~/components/ui/input";
 type Props = {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  userID: string;
 };
 
-const CreatePromptModal = ({ open, setOpen }: Props) => {
+const CreatePromptModal = ({ open, setOpen, userID }: Props) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [prompt, setPrompt] = useState("");
 
   const { mutate: createPrompt } = useMutation({
     mutationFn: async () => {
       const response = await fetch("/api/user/create-prompt", {
         method: "POST",
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ content: prompt, userID }),
         headers: {
           "Content-Type": "application/json",
         },
       });
 
-      return (await response.json()) as Chats;
+      return (await response.json()) as Prompts;
     },
     onSuccess: () => {
       setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["prompts", userID] });
       router.refresh();
     },
     onError: (error) => {

@@ -5,18 +5,16 @@ import { db } from "~/server/db";
 
 export async function POST(request: Request) {
   try {
-    const { name, chatID } = await request.json();
+    const { content, userID } = await request.json();
 
-    const editChatResponse = await db.chats.update({
-      where: {
-        id: chatID,
-      },
+    const createPromptResponse = await db.prompts.create({
       data: {
-        name,
+        content,
+        user_id: userID,
       },
     });
 
-    return new Response(JSON.stringify({ chat: editChatResponse }));
+    return new Response(JSON.stringify({ prompt: createPromptResponse }));
   } catch (error: any) {
     let errorMessage = error.message || "An unexpected error occurred";
     const errorCode = error.status || 500;

@@ -50,10 +50,26 @@ export async function POST(req: Request) {
 
     const { id } = evt.data;
 
+    // Create a new user
     await db.users.create({
       data: {
         id: id as string,
         created_at: new Date(),
+      },
+    });
+
+    // Create default prompts
+    await db.prompts.create({
+      data: {
+        content: "Explain this error",
+        user_id: id as string,
+      },
+    });
+
+    await db.prompts.create({
+      data: {
+        content: "Explain these lines of code",
+        user_id: id as string,
       },
     });
 
