@@ -80,8 +80,8 @@ const Sidebar = async ({ children }: SidebarProps) => {
           )}
 
           <div className="mb-4 ml-4 flex flex-row items-center gap-1 align-bottom">
-            <ModeToggle />
             {user && <Profile />}
+            <ModeToggle />
           </div>
         </div>
       </div>
