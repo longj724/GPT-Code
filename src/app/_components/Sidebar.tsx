@@ -1,6 +1,6 @@
 // External Dependencies
 import Link from "next/link";
-import { Package2 } from "lucide-react";
+import { Edit, Package2 } from "lucide-react";
 import { db } from "~/server/db";
 import { currentUser } from "@clerk/nextjs";
 
@@ -8,8 +8,9 @@ import { currentUser } from "@clerk/nextjs";
 import { ModeToggle } from "./ModeToggle";
 import SidebarProject from "./SidebarProject";
 import CreateProjectModal from "./modals/CreateProjectModal";
-import { cn } from "~/lib/utils";
 import Profile from "./Profile";
+import EditApiKeysModal from "./modals/EditApiKeysModal";
+import { cn } from "~/lib/utils";
 
 export type SidebarProps = {
   children: React.ReactNode;
@@ -81,6 +82,7 @@ const Sidebar = async ({ children }: SidebarProps) => {
 
           <div className="mb-4 ml-4 flex flex-row items-center gap-1 align-bottom">
             {user && <Profile />}
+            {user && <EditApiKeysModal />}
             <ModeToggle />
           </div>
         </div>
