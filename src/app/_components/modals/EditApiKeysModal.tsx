@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Key } from "lucide-react";
 import { Users } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
@@ -45,6 +46,25 @@ const EditApiKeysModal = (props: Props) => {
     onError: (error) => {
       // TODO: Handle error
       console.log(error);
+    },
+  });
+
+  useQuery({
+    queryKey: ["users", user?.id],
+    enabled: !!user?.id,
+    queryFn: async () => {
+      const response = await fetch(`/api/user?user_id=${user?.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = (await response.json()).user as Users;
+      setOpenAIKey(data.openai_api_key ?? "");
+      // Set Gemini Key once I add it to the db
+
+      return data;
     },
   });
 

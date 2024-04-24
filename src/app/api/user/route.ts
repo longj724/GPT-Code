@@ -11,18 +11,16 @@ export async function GET(request: NextApiRequest, response: NextApiResponse) {
     const searchParams = new URLSearchParams(url.search);
     const userID = searchParams.get("user_id");
 
-    const prompts = await db.prompts.findMany({
+    const user = await db.users.findUnique({
       where: {
-        user_id: userID as string,
+        id: userID as string,
       },
     });
 
-    return new Response(JSON.stringify({ prompts: prompts ?? [] }));
+    return new Response(JSON.stringify({ user: user ?? null }));
   } catch (error: any) {
     let errorMessage = error.message || "An unexpected error occurred";
     const errorCode = error.status || 500;
-
-    console.log("error", error);
 
     return new Response(JSON.stringify({ message: errorMessage }), {
       status: errorCode,

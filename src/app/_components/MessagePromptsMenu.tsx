@@ -32,15 +32,12 @@ const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
     queryKey: ["prompts", user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
-      const response = await fetch(
-        `/api/user/get-prompts?user_id=${user?.id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const response = await fetch(`/api/user/prompts?user_id=${user?.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+      });
 
       return (await response.json()).prompts as Prompts[];
     },
