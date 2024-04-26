@@ -1,7 +1,7 @@
 "use client";
 
 // Exernal Dependencies
-import { ChevronDown, ChevronRight, Ellipsis, Plus } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus } from "lucide-react";
 import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ import { Chats, Projects } from "@prisma/client";
 import { cn, modelToNameMap } from "~/lib/utils";
 import SidebarProjectChat from "./SidebarProjectChat";
 import { Button } from "~/components/ui/button";
+import ProjectMenu from "./ProjectMenu";
 
 type Props = {
   project: Projects & {
@@ -72,7 +73,7 @@ const SidebarProject = ({ project }: Props) => {
           className="ml-auto flex h-6 w-6 items-center justify-center"
           onClick={handleOptionsClick}
         >
-          <Ellipsis className="hover:pointer rounded-sm hover:bg-gray-500" />
+          <ProjectMenu projectID={project.id} />
         </div>
       </div>
       {projectOpen && (
