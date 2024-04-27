@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
@@ -48,6 +49,7 @@ type Props = {
 
 const EditProjectContextModal = ({ isOpen, projectID, setIsOpen }: Props) => {
   const { user } = useUser();
+  const router = useRouter();
 
   useQuery({
     queryKey: ["project", projectID, user?.id],
@@ -89,6 +91,7 @@ const EditProjectContextModal = ({ isOpen, projectID, setIsOpen }: Props) => {
       return (await response.json()).project as Projects;
     },
     onSuccess: () => {
+      router.refresh();
       setIsOpen(false);
     },
     onError: (error) => {
