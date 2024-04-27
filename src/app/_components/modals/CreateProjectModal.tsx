@@ -65,7 +65,7 @@ const CreateProjectModal = () => {
       const { project, chat } = data;
       setOpen(false);
       router.push(
-        `/chat/${project.id}/${chat.id}?model=${modelToNameMap[chat.model_id]}`,
+        `/chat/${project.id}/${chat.id}?chat_name=${chat.name}&model=${modelToNameMap[chat.model_id]}`,
       );
       router.refresh();
     },

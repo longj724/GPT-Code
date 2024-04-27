@@ -37,9 +37,9 @@ const SidebarProject = ({ project }: Props) => {
 
       return (await response.json()) as Chats;
     },
-    onSuccess: ({ project_id, id, model_id }) => {
+    onSuccess: ({ project_id, id, model_id, name }) => {
       router.push(
-        `/chat/${project_id}/${id}/?model=${modelToNameMap[model_id]}`,
+        `/chat/${project_id}/${id}/?project_name=${name}&model=${modelToNameMap[model_id]}`,
       );
       router.refresh();
     },
@@ -79,7 +79,12 @@ const SidebarProject = ({ project }: Props) => {
       {projectOpen && (
         <div className="my-1 flex w-[90%] flex-col gap-1">
           {project.chats?.map((chat, idx) => (
-            <SidebarProjectChat projectID={project.id} chat={chat} key={idx} />
+            <SidebarProjectChat
+              chat={chat}
+              key={idx}
+              projectID={project.id}
+              projectName={project.name}
+            />
           ))}
           <div className={cn("ml-8 mt-1 flex flex-row rounded-sm")}>
             <Button

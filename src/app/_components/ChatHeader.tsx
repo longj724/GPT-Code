@@ -15,6 +15,7 @@ type Props = {
 const ChatHeader = ({ showSelectedModel }: Props) => {
   const searchParams = useSearchParams();
   const model = searchParams.get("model");
+  const chatName = searchParams.get("chat_name");
 
   return (
     <header className="lg:px flex h-14 min-h-[3.5rem] w-full items-center justify-between border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
@@ -42,7 +43,7 @@ const ChatHeader = ({ showSelectedModel }: Props) => {
           {showSelectedModel && <h1>{model}</h1>}
         </div>
       </div>
-      <div className="flex flex-1 justify-center">Project Name</div>
+      <div className="flex flex-1 justify-center">{chatName}</div>
       <div className="flex flex-1 justify-end"></div>
     </header>
   );
