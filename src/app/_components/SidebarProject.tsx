@@ -79,12 +79,7 @@ const SidebarProject = ({ project }: Props) => {
       {projectOpen && (
         <div className="my-1 flex w-[90%] flex-col gap-1">
           {project.chats?.map((chat, idx) => (
-            <SidebarProjectChat
-              chat={chat}
-              key={idx}
-              projectID={project.id}
-              projectName={project.name}
-            />
+            <SidebarProjectChat chat={chat} key={idx} projectID={project.id} />
           ))}
           <div className={cn("ml-8 mt-1 flex flex-row rounded-sm")}>
             <Button

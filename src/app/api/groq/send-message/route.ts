@@ -1,13 +1,14 @@
 // External Dependencies
 import { Messages } from "@prisma/client";
 import { encode } from "gpt-tokenizer";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { OpenAIStream, StreamingTextResponse } from "ai";
-import { OpenAI as openai } from "openai";
+import Groq from "groq-sdk";
+import { CompletionCreateParams } from "groq-sdk/resources/chat/completions.mjs";
 
 // Relative Dependencies
 import { db } from "~/server/db";
 import { modelDisplayNameToNameMap, modelNameToIDMap } from "~/lib/utils";
+import { decrypt, DecryptionInput } from "~/lib/utils";
 
 // For GPT 3.5 assistant
 const ASSISTANT_ID = "asst_6H3IY3PbORjy4s1mqb9mr4C1";
@@ -43,14 +44,14 @@ export async function POST(request: Request) {
     include: {
       Users: {
         include: {
-          OpenAIKeys: true,
+          GroqKeys: true,
         },
       },
     },
   });
 
-  if (!project?.Users?.OpenAIKeys?.key) {
-    return new Response("No OpenAI API Key Added", {
+  if (!project?.Users?.GroqKeys?.key) {
+    return new Response("No Groq API Key Added", {
       status: 400,
     });
   }
@@ -65,7 +66,7 @@ export async function POST(request: Request) {
   });
 
   const contextWindowSize = chat?.Models?.context_window || 16385;
-  let messages: ChatCompletionMessageParam[] = [];
+  let messages: CompletionCreateParams.Message[] = [];
   let tokensUsed = 0;
 
   const newMessageTokens = encode(message).length;
@@ -123,12 +124,17 @@ export async function POST(request: Request) {
     content: message,
   });
 
-  const OpenAI = new openai({
-    apiKey: project?.Users?.OpenAIKeys?.key,
+  const decryptInput: DecryptionInput = {
+    iv: project?.Users?.GroqKeys?.iv,
+    encryptedData: project?.Users?.GroqKeys?.key,
+  };
+
+  const groq = new Groq({
+    apiKey: decrypt(decryptInput),
   });
 
-  const completion = await OpenAI.chat.completions.create({
-    model: modelDisplayNameToNameMap[model] || "gpt-3.5-turbo",
+  const completion = await groq.chat.completions.create({
+    model: modelDisplayNameToNameMap[model] || "mixtral-8x7b-32768",
     messages: messages,
     stream: true,
   });

@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Input } from "~/components/ui/input";
 import { TextareaAutosize } from "~/components/ui/textarea-autosize";
 import MessagePromptsMenu from "./MessagePromptsMenu";
-import { cn } from "~/lib/utils";
+import { cn, modelIDToChatEndpoint } from "~/lib/utils";
 
 type Props = {
   changedModel: boolean;
@@ -37,7 +37,10 @@ const ChatInput = ({
 
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (message?: string) => {
-      const response = await fetch("/api/openai/send-message", {
+      if (!model) return;
+      const chatEndpoint = modelIDToChatEndpoint(model);
+
+      const response = await fetch(chatEndpoint, {
         method: "POST",
         body: JSON.stringify({
           message: message || userInput,

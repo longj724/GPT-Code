@@ -15,6 +15,10 @@ export async function GET(request: NextApiRequest, response: NextApiResponse) {
       where: {
         id: userID as string,
       },
+      include: {
+        OpenAIKeys: true,
+        GroqKeys: true,
+      },
     });
 
     return new Response(JSON.stringify({ user: user ?? null }));

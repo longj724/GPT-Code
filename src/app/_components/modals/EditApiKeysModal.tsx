@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Key } from "lucide-react";
-import { Users } from "@prisma/client";
+import { GroqKeys, OpenAIKeys, Users } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,17 +22,24 @@ import { Input } from "~/components/ui/input";
 
 type Props = {};
 
+export type UserProfileResponse = {
+  user: Users & {
+    OpenAIKeys: OpenAIKeys;
+    GroqKeys: GroqKeys;
+  };
+};
+
 const EditApiKeysModal = (props: Props) => {
   const { user } = useUser();
   const [open, setIsOpen] = useState(false);
   const [openAIKey, setOpenAIKey] = useState("");
-  const [geminiKey, setGeminiKey] = useState("");
+  const [groqKey, setGroqKey] = useState("");
 
   const { mutate: editApiKeys } = useMutation({
     mutationFn: async () => {
       const response = await fetch("/api/user/api-keys", {
         method: "POST",
-        body: JSON.stringify({ openAIKey, geminiKey, userID: user?.id }),
+        body: JSON.stringify({ openAIKey, groqKey, userID: user?.id }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -60,9 +67,9 @@ const EditApiKeysModal = (props: Props) => {
         },
       });
 
-      const data = (await response.json()).user as Users;
-      setOpenAIKey(data.openai_api_key ?? "");
-      // Set Gemini Key once I add it to the db
+      const data = (await response.json()) as UserProfileResponse;
+      setOpenAIKey(data.user.OpenAIKeys.key ?? "");
+      setGroqKey(data.user.GroqKeys.key ?? "");
 
       return data;
     },
@@ -99,14 +106,14 @@ const EditApiKeysModal = (props: Props) => {
             </div>
             <div className="flex flex-row items-center">
               <Label htmlFor="name" className="w-1/5">
-                Google Gemini Key
+                Groq API Key
               </Label>
               <Input
                 className="w-4/5"
                 id="name"
-                onChange={(e) => setGeminiKey(e.target.value)}
+                onChange={(e) => setGroqKey(e.target.value)}
                 type="password"
-                value={geminiKey}
+                value={groqKey}
               />
             </div>
           </div>

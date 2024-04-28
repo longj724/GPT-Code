@@ -40,7 +40,7 @@ model Messages {
 model Models {
   id             Int      @id @default(autoincrement())
   created_at     DateTime @default(now()) @db.Timestamptz(6)
-  name  String
+  name           String
   display_name   String?
   context_window Int
   Chats          Chats[]
@@ -50,13 +50,36 @@ model Models {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Users {
-  id                 String   @id 
-  created_at         DateTime @default(now()) @db.Timestamptz(6)
-  openai_api_key     String?
-  perplexity_api_key String?
-  anthropic_api_key  String?
-  Projects           Projects[]
-  Prompts            Prompts[]
+  id              String      @id
+  created_at      DateTime    @default(now()) @db.Timestamptz(6)
+  groq_key_info   String?     @unique @db.Uuid
+  GroqKeys        GroqKeys?   @relation(fields: [groq_key_info], references: [id], onDelete: Cascade)
+  openai_key_info String?     @unique @db.Uuid
+  OpenAIKeys      OpenAIKeys? @relation(fields: [openai_key_info], references: [id], onDelete: Cascade)
+  Projects        Projects[]
+  Prompts         Prompts[]
+
+  @@schema("public")
+}
+
+model OpenAIKeys {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  key        String
+  iv         String
+  user_id    String
+  Users      Users?
+
+  @@schema("public")
+}
+
+model GroqKeys {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  key        String
+  iv         String
+  user_id    String
+  Users      Users?
 
   @@schema("public")
 }
@@ -71,9 +94,8 @@ model Projects {
   context               String?
   system_prompt         String   @default("")
   Chats                 Chats[]
-  user_id               String   
+  user_id               String
   Users                 Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  
 
   @@schema("public")
 }
@@ -82,7 +104,7 @@ model Prompts {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at DateTime @default(now()) @db.Timestamptz(6)
   content    String
-  user_id    String   
+  user_id    String
   Users      Users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@schema("public")
