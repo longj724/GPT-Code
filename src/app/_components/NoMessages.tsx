@@ -55,14 +55,14 @@ const NoMessages = ({ setChangedModel }: Props) => {
         <SelectContent>
           <SelectItem
             value="GPT-3.5-Turbo"
-            disabled={!userProfile?.user.OpenAIKeys.key}
+            disabled={!userProfile?.user.OpenAIKeys?.key}
             className="hover:cursor-pointer"
           >
             GPT-3.5-Turbo{" "}
-            {!userProfile?.user.OpenAIKeys.key && "No OpenAI API Key Added"}
+            {!userProfile?.user.OpenAIKeys?.key && "No OpenAI API Key Added"}
           </SelectItem>
           <SelectItem
-            disabled={!userProfile?.user.OpenAIKeys.key}
+            disabled={!userProfile?.user.OpenAIKeys?.key}
             value="GPT-4-Turbo"
             className="hover:cursor-pointer"
           >
@@ -70,20 +70,20 @@ const NoMessages = ({ setChangedModel }: Props) => {
             {!userProfile?.user.OpenAIKeys.key && "No OpenAI API Key Added"}
           </SelectItem>
           <SelectItem
-            disabled={!userProfile?.user.OpenAIKeys.key}
+            disabled={!userProfile?.user.GroqKeys?.key}
             value="Mixtral 8x7b"
             className="hover:cursor-pointer"
           >
             Mixtral 8x7b{" "}
-            {!userProfile?.user.GroqKeys.key && "No Groq API Key Added"}
+            {!userProfile?.user.GroqKeys?.key && "No Groq API Key Added"}
           </SelectItem>
           <SelectItem
-            disabled={!userProfile?.user.GroqKeys.key}
+            disabled={!userProfile?.user.GroqKeys?.key}
             value="LLaMA3 8b"
             className="hover:cursor-pointer"
           >
             LLaMA3 70b{" "}
-            {!userProfile?.user.GroqKeys.key && "No Groq API Key Added"}
+            {!userProfile?.user.GroqKeys?.key && "No Groq API Key Added"}
           </SelectItem>
         </SelectContent>
       </Select>

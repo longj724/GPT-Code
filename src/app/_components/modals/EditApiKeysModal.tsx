@@ -1,11 +1,10 @@
 "use client";
 // External Dependencies
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Key } from "lucide-react";
 import { GroqKeys, OpenAIKeys, Users } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
-import { useQuery } from "@tanstack/react-query";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
@@ -19,6 +18,7 @@ import {
 } from "~/components/ui/dialog";
 import { Label } from "~/components/ui/label";
 import { Input } from "~/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {};
 
@@ -30,6 +30,7 @@ export type UserProfileResponse = {
 };
 
 const EditApiKeysModal = (props: Props) => {
+  const queryClient = useQueryClient();
   const { user } = useUser();
   const [open, setIsOpen] = useState(false);
   const [openAIKey, setOpenAIKey] = useState("");
@@ -49,6 +50,7 @@ const EditApiKeysModal = (props: Props) => {
     },
     onSuccess: () => {
       setIsOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["user", user?.id] });
     },
     onError: (error) => {
       // TODO: Handle error
