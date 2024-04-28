@@ -53,9 +53,9 @@ model Users {
   id              String      @id
   created_at      DateTime    @default(now()) @db.Timestamptz(6)
   groq_key_info   String?     @unique @db.Uuid
-  GroqKeys        GroqKeys?   @relation(fields: [groq_key_info], references: [id], onDelete: Cascade)
+  GroqKeys        GroqKeys?   @relation(fields: [groq_key_info], references: [id], onDelete: SetNull)
   openai_key_info String?     @unique @db.Uuid
-  OpenAIKeys      OpenAIKeys? @relation(fields: [openai_key_info], references: [id], onDelete: Cascade)
+  OpenAIKeys      OpenAIKeys? @relation(fields: [openai_key_info], references: [id], onDelete: SetNull)
   Projects        Projects[]
   Prompts         Prompts[]
 
