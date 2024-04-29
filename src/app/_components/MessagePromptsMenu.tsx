@@ -1,5 +1,5 @@
 // External Dependencies
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ChevronUp, FilePenLine, Send, SquarePlus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";

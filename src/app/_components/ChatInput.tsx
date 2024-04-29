@@ -148,18 +148,18 @@ const ChatInput = ({
 
   const handleSendMessageWithPrompt = (prompt: string) => {
     setIsGenerating(true);
-    updateUserMessageOptimistically();
-    const message = `${prompt}: ${userInput}`;
+    const message = `${prompt}:\n${userInput}`;
+    updateUserMessageOptimistically(prompt);
     sendMessage(message);
   };
 
-  const updateUserMessageOptimistically = () => {
+  const updateUserMessageOptimistically = (prompt: string = "") => {
     // UUID will be different then created on the db but I don't think it matters
     let newUserQuestion: Messages = {
       id: uuidv4(),
       created_at: new Date(),
       type: "user",
-      content: userInput,
+      content: prompt !== "" ? `${prompt}:\n${userInput}` : userInput,
       chat_id: (chatID as string) ?? "",
     };
 
@@ -178,29 +178,29 @@ const ChatInput = ({
     <div className="mb-4 mt-auto flex w-4/5">
       <div className="relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2 border-input">
         <>
-          <Paperclip
+          {/* <Paperclip
             className="absolute bottom-[12px] left-3 cursor-pointer p-1 hover:opacity-50"
             size={32}
             onClick={() => fileInputRef.current?.click()}
-          />
+          /> */}
 
           {/* Hidden input to select files from device */}
-          <Input
+          {/* <Input
             ref={fileInputRef}
             className="hidden"
             type="file"
             onChange={(e) => {
               if (!e.target.files) return;
-              // handleSelectDeviceFile(e.target.files[0]);
+              handleSelectDeviceFile(e.target.files[0]);
             }}
-            // accept={filesToAccept}
-          />
+            accept={filesToAccept}
+          /> */}
         </>
 
         <TextareaAutosize
           textareaRef={chatInputRef}
-          className="text-md flex w-full resize-none rounded-md border-none bg-transparent px-14 py-2 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder={`Ask anything.`}
+          className="text-md flex w-full resize-none rounded-md border-none bg-transparent py-2 pl-4 pr-20 ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          placeholder={`Send a message...`}
           onValueChange={handleInputChange}
           value={userInput}
           minRows={1}
@@ -211,7 +211,7 @@ const ChatInput = ({
           onCompositionEnd={() => setIsTyping(false)}
         />
 
-        <div className="absolute bottom-[14px] right-3 flex cursor-pointer flex-row gap-1">
+        <div className="absolute bottom-[14px] right-3 ml-[2px] flex cursor-pointer flex-row gap-1">
           {isGenerating ? (
             <CircleStop
               className="animate-pulse rounded bg-transparent p-1 hover:bg-background"
@@ -229,8 +229,8 @@ const ChatInput = ({
             />
           )}
           <MessagePromptsMenu
-            userInput={userInput}
             sendMessageWithPrompt={handleSendMessageWithPrompt}
+            userInput={userInput}
           />
         </div>
       </div>
