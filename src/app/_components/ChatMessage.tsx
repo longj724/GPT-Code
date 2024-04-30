@@ -4,6 +4,7 @@ import { Check, Copy } from "lucide-react";
 import { Messages } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { useUser } from "@clerk/nextjs";
 
 // Relative Dependencies
 import MessageMarkdown from "./MessageMarkdown";
@@ -16,6 +17,7 @@ type Props = {
 };
 
 const ChatMessage = ({ message }: Props) => {
+  const { user } = useUser();
   const { type, content } = message;
   const searchParams = useSearchParams();
   const model = searchParams.get("model");
@@ -25,6 +27,16 @@ const ChatMessage = ({ message }: Props) => {
   const onCopy = () => {
     if (isCopied) return;
     copyToClipboard(content);
+  };
+
+  const getModelLogo = () => {
+    if (model === "GPT-3.5-Turbo" || model === "GPT-4-Turbo") {
+      return "/ChatGPTImage.png";
+    } else if (model === "Mixtral 8x7b") {
+      return "/MixtralLogo.png";
+    } else {
+      return "/LlamaLogo.jpeg";
+    }
   };
 
   return (
@@ -37,10 +49,11 @@ const ChatMessage = ({ message }: Props) => {
       <div className="flex w-4/5 flex-col ">
         <div className="flex flex-row items-center gap-2 p-2">
           <Image
-            src="https://picsum.photos/35"
-            width={35}
-            height={35}
-            alt="Model Image"
+            src={type === "user" ? user?.imageUrl ?? "" : getModelLogo()}
+            width={30}
+            height={30}
+            alt="Model Logo"
+            className="rounded-full"
           />
           <h2 className="font-semibold">{type === "user" ? "You" : model}</h2>
           <div className="ml-auto flex flex-row">
