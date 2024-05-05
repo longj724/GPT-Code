@@ -1,14 +1,14 @@
 // External Dependencies
 
 // Relative Dependencies
-import { encrypt } from "~/lib/utils";
+import { encrypt } from "~/lib/security";
 import { db } from "~/server/db";
 
 export async function POST(request: Request) {
   try {
     const { openAIKey, groqKey, userID } = await request.json();
 
-    let { encryptedData: encryptedOpenAIKey, iv: openAIIv } =
+    let { encryptedData: encryptedOpenAIKey, iv: openaAIIv } =
       encrypt(openAIKey);
     let { encryptedData: encryptedGroqKey, iv: groqIv } = encrypt(groqKey);
 
@@ -25,8 +25,8 @@ export async function POST(request: Request) {
     if (!user?.OpenAIKeys?.key) {
       const openaiKeyResponse = await db.openAIKeys.create({
         data: {
-          key: encryptedOpenAIKey,
-          iv: openAIIv,
+          key: openAIKey,
+          iv: openaAIIv,
           user_id: userID,
         },
       });
@@ -45,8 +45,8 @@ export async function POST(request: Request) {
           id: user?.OpenAIKeys?.id,
         },
         data: {
-          key: encryptedOpenAIKey,
-          iv: openAIIv,
+          key: openAIKey,
+          iv: openaAIIv,
         },
       });
     }
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     if (!user?.GroqKeys?.key) {
       const groqKeyResponse = await db.groqKeys.create({
         data: {
-          key: encryptedGroqKey,
+          key: groqKey,
           iv: groqIv,
           user_id: userID,
         },
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
           id: user?.GroqKeys?.id,
         },
         data: {
-          key: encryptedGroqKey,
+          key: groqKey,
           iv: groqIv,
         },
       });

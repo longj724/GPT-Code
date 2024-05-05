@@ -8,10 +8,7 @@ import { CompletionCreateParams } from "groq-sdk/resources/chat/completions.mjs"
 // Relative Dependencies
 import { db } from "~/server/db";
 import { modelDisplayNameToNameMap, modelNameToIDMap } from "~/lib/utils";
-import { decrypt, DecryptionInput } from "~/lib/utils";
-
-// For GPT 3.5 assistant
-const ASSISTANT_ID = "asst_6H3IY3PbORjy4s1mqb9mr4C1";
+import { EncryptionData, decrypt } from "~/lib/security";
 
 export async function POST(request: Request) {
   const { message, model, chatID, projectID } = await request.json();
@@ -124,13 +121,13 @@ export async function POST(request: Request) {
     content: message,
   });
 
-  const decryptInput: DecryptionInput = {
-    iv: project?.Users?.GroqKeys?.iv,
-    encryptedData: project?.Users?.GroqKeys?.key,
-  };
+  // const decryptInput: EncryptionData = {
+  //   iv: project?.Users?.GroqKeys?.iv,
+  //   encryptedData: project?.Users?.GroqKeys?.key,
+  // };
 
   const groq = new Groq({
-    apiKey: decrypt(decryptInput),
+    apiKey: project?.Users?.GroqKeys?.key,
   });
 
   const completion = await groq.chat.completions.create({

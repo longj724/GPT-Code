@@ -9,9 +9,6 @@ import { OpenAI as openai } from "openai";
 import { db } from "~/server/db";
 import { modelDisplayNameToNameMap, modelNameToIDMap } from "~/lib/utils";
 
-// For GPT 3.5 assistant
-const ASSISTANT_ID = "asst_6H3IY3PbORjy4s1mqb9mr4C1";
-
 export async function POST(request: Request) {
   const { message, model, chatID, projectID } = await request.json();
 
@@ -122,6 +119,12 @@ export async function POST(request: Request) {
     role: "user",
     content: message,
   });
+
+  // const decryptInput: EncryptionData = {
+  //   iv: project?.Users?.OpenAIKeys?.iv,
+  //   encryptedData: project?.Users?.OpenAIKeys?.key,
+  // };
+  // const decryptResult = decrypt(decryptInput);
 
   const OpenAI = new openai({
     apiKey: project?.Users?.OpenAIKeys?.key,

@@ -38,9 +38,9 @@ export const modelDisplayNameToNameMap: { [key: string]: string } = {
 
 const algorithm = "aes-256-cbc";
 const key: Buffer = crypto.randomBytes(32);
-const iv: Buffer = crypto.randomBytes(16);
 
 export const encrypt = (text: string) => {
+  const iv: Buffer = crypto.randomBytes(16);
   let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
   let encrypted = cipher.update(text);
   encrypted = Buffer.concat([encrypted, cipher.final()]);
