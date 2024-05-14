@@ -40,11 +40,11 @@ const ChatHeader = ({ showSelectedModel }: Props) => {
               <h2>GPT Code</h2>
             </Link>
             <Link
-              href="#"
+              href="/"
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
               <Package2 className="h-5 w-5" />
-              Dashboard
+              Home
             </Link>
             {/* <Link
               href="#"
