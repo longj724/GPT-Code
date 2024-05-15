@@ -22,12 +22,15 @@ const ChatArea = (props: Props) => {
     queryKey: ["chat", chatID],
     enabled: !!chatID,
     queryFn: async () => {
+      console.log("here");
       const response = await fetch(`/api/get-messages?chat_id=${chatID}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
       });
+
+      console.log("response", response);
 
       const allMessages = (await response.json()).messages as Messages[];
       setMessages(allMessages);

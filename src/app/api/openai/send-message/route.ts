@@ -87,7 +87,8 @@ export async function POST(request: Request) {
   while (
     tokensUsed < contextWindowSize &&
     existingMessages &&
-    curMessageIndex < existingMessages.length
+    curMessageIndex < existingMessages.length &&
+    !chat?.exclude_prior_messages
   ) {
     const nextMessage = existingMessages[curMessageIndex];
     const nextMessageTokens = encode((nextMessage as Messages).content).length;

@@ -30,7 +30,7 @@ const EditChatTitleModal = ({ chatID }: Props) => {
 
   const { mutate: editChatName } = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/edit-chat-name", {
+      const response = await fetch("/api/edit-chat-info", {
         method: "POST",
         body: JSON.stringify({ name: chatName, chatID }),
         headers: {

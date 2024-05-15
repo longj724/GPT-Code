@@ -1,15 +1,87 @@
 "use client";
 // Exteral Dependencies
-import { Menu, Package2 } from "lucide-react";
+import { Menu, Package2, Settings } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useParams, useSearchParams, useRouter } from "next/navigation";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Chats } from "@prisma/client";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
+import { Checkbox } from "~/components/ui/checkbox";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 type Props = {
   showSelectedModel: boolean;
+};
+
+const SettingMenu = () => {
+  const { chatID } = useParams();
+  const router = useRouter();
+
+  const { mutate: editChatSettings } = useMutation({
+    mutationFn: async (event: CheckedState) => {
+      const response = await fetch("/api/edit-chat-info", {
+        method: "POST",
+        body: JSON.stringify({ excludePriorMessages: event, chatID }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return (await response.json()) as Chats;
+    },
+    onSuccess: (data) => {
+      console.log(data);
+      router.refresh();
+    },
+    onError: (error) => {
+      // TODO: Handle error
+      console.log(error);
+    },
+  });
+
+  const { data: someChat } = useQuery({
+    queryKey: ["chat", chatID],
+    enabled: !!chatID,
+    queryFn: async () => {
+      const response = await fetch(`/api/get-chat?chat_id=${chatID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      return (await response.json()).chat as Chats;
+    },
+  });
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Settings size={20} className="hover:cursor-pointer" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem
+          className="flex flex-row gap-2 hover:cursor-pointer"
+          onSelect={(e) => e.preventDefault()}
+        >
+          <Checkbox
+            onCheckedChange={(e) => editChatSettings(e)}
+            checked={someChat?.exclude_prior_messages}
+          />
+          <span className="">Exclude prior chat history on new message</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 };
 
 const ChatHeader = ({ showSelectedModel }: Props) => {
@@ -65,7 +137,9 @@ const ChatHeader = ({ showSelectedModel }: Props) => {
         </div>
       </div>
       <div className="flex flex-1 justify-center">{chatName}</div>
-      <div className="flex flex-1 justify-end"></div>
+      <div className="flex flex-1 justify-end">
+        <SettingMenu />
+      </div>
     </header>
   );
 };

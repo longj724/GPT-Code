@@ -83,9 +83,10 @@ const ChatMessages = forwardRef<HTMLDivElement, Props>(
             />
           </div>
         )}
-        {messages && messages.length === 0 && (
-          <NoMessages setChangedModel={setChangedModel} />
-        )}
+        {!messages ||
+          (messages.length === 0 && (
+            <NoMessages setChangedModel={setChangedModel} />
+          ))}
       </>
     );
   },

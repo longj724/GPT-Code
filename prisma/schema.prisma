@@ -11,15 +11,16 @@ datasource db {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Chats {
-  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at DateTime   @default(now()) @db.Timestamptz(6)
-  name       String
-  thread_id  String?
-  model_id   Int        @default(1)
-  project_id String     @db.Uuid
-  Models     Models?    @relation(fields: [model_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  Projects   Projects   @relation(fields: [project_id], references: [id], onDelete: Cascade)
-  Messages   Messages[]
+  id                     String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at             DateTime   @default(now()) @db.Timestamptz(6)
+  name                   String
+  thread_id              String?
+  model_id               Int        @default(1)
+  project_id             String     @db.Uuid
+  exclude_prior_messages Boolean    @default(false)
+  Models                 Models?    @relation(fields: [model_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Projects               Projects   @relation(fields: [project_id], references: [id], onDelete: Cascade)
+  Messages               Messages[]
 
   @@schema("public")
 }

@@ -5,14 +5,15 @@ import { db } from "~/server/db";
 
 export async function POST(request: Request) {
   try {
-    const { name, chatID } = await request.json();
+    console.log("here");
+    const { name, chatID, excludePriorMessages } = await request.json();
 
     const editChatResponse = await db.chats.update({
       where: {
         id: chatID,
       },
       data: {
-        name,
+        exclude_prior_messages: excludePriorMessages,
       },
     });
 

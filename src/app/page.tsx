@@ -16,7 +16,11 @@ const NoChatSelected = async () => {
       <Button>Watch Demo</Button>
     </div>
   ) : (
-    <div>No Project Selected Page</div>
+    <div className="flex h-full flex-col items-center justify-center gap-6">
+      <div>
+        Create a new project or select an existing project to get started
+      </div>
+    </div>
   );
 };
 
