@@ -39,7 +39,6 @@ const SettingMenu = () => {
       return (await response.json()) as Chats;
     },
     onSuccess: (data) => {
-      console.log(data);
       router.refresh();
     },
     onError: (error) => {
