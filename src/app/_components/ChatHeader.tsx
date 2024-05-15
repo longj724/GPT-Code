@@ -1,6 +1,6 @@
 "use client";
 // Exteral Dependencies
-import { Menu, Package2, Settings } from "lucide-react";
+import { BotMessageSquare, Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -107,14 +107,14 @@ const ChatHeader = ({ showSelectedModel }: Props) => {
               href="#"
               className="flex flex-row items-center gap-2 text-lg font-semibold"
             >
-              <Package2 className="h-6 w-6" />
+              <BotMessageSquare className="h-5 w-5" />
               <h2>GPT Code</h2>
             </Link>
             <Link
               href="/"
               className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
             >
-              <Package2 className="h-5 w-5" />
+              <BotMessageSquare className="h-5 w-5" />
               Home
             </Link>
             {/* <Link

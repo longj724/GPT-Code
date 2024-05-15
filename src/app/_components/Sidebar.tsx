@@ -1,6 +1,6 @@
 // External Dependencies
 import Link from "next/link";
-import { Edit, Package2 } from "lucide-react";
+import { BotMessageSquare } from "lucide-react";
 import { db } from "~/server/db";
 import { currentUser } from "@clerk/nextjs";
 
@@ -57,7 +57,7 @@ const Sidebar = async ({ children }: SidebarProps) => {
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
-              <Package2 className="h-6 w-6" />
+              <BotMessageSquare className="h-6 w-6" />
               <span className="">GPT Code</span>
             </Link>
           </div>
