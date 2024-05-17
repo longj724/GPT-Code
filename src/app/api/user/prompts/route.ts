@@ -1,10 +1,9 @@
 // External Dependencies
-import { NextApiRequest, NextApiResponse } from "next";
 
 // Relative Dependencies
 import { db } from "~/server/db";
 
-export async function GET(request: NextApiRequest, response: NextApiResponse) {
+export async function GET(request: Request, response: Response) {
   try {
     // Doing this because request.query is not working for some reason
     const url = new URL(request.url as string);
