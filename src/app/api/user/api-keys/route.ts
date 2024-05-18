@@ -8,9 +8,9 @@ export async function POST(request: Request) {
   try {
     const { openAIKey, groqKey, userID } = await request.json();
 
-    let { encryptedData: encryptedOpenAIKey, iv: openaAIIv } =
+    const { encryptedData: encryptedOpenAIKey, iv: openaAIIv } =
       encrypt(openAIKey);
-    let { encryptedData: encryptedGroqKey, iv: groqIv } = encrypt(groqKey);
+    const { encryptedData: encryptedGroqKey, iv: groqIv } = encrypt(groqKey);
 
     const user = await db.users.findUnique({
       where: {
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
       JSON.stringify({ message: "Keys successfully updated" }),
     );
   } catch (error: any) {
-    let errorMessage = error.message || "An unexpected error occurred";
+    const errorMessage = error.message || "An unexpected error occurred";
     const errorCode = error.status || 500;
 
     return new Response(JSON.stringify({ message: errorMessage }), {

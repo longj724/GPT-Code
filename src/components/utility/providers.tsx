@@ -4,8 +4,8 @@
 import { useState } from "react";
 import { TooltipProvider } from "~/components/ui/tooltip";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeProviderProps } from "next-themes/dist/types";
-import { FC } from "react";
+import { type ThemeProviderProps } from "next-themes/dist/types";
+import { type FC } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import NextAdapterApp from "next-query-params/app";
 import { QueryParamProvider } from "use-query-params";

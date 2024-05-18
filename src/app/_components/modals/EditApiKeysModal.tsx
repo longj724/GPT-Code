@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Key } from "lucide-react";
-import { GroqKeys, OpenAIKeys, Users } from "@prisma/client";
+import { type GroqKeys, type OpenAIKeys, type Users } from "@prisma/client";
 import { useUser } from "@clerk/nextjs";
 
 // Relative Dependencies

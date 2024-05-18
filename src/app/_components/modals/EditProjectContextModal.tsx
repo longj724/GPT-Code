@@ -1,8 +1,8 @@
 "use client";
 // External Dependencies
-import { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Chats, Projects } from "@prisma/client";
+import { type Chats, type Projects } from "@prisma/client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";

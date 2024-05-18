@@ -4,7 +4,7 @@ import { BotMessageSquare, Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Chats } from "@prisma/client";
+import { type Chats } from "@prisma/client";
 
 // Relative Dependencies
 import { Button } from "~/components/ui/button";
@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { Checkbox } from "~/components/ui/checkbox";
-import { CheckedState } from "@radix-ui/react-checkbox";
+import { type CheckedState } from "@radix-ui/react-checkbox";
 
 type Props = {
   showSelectedModel: boolean;

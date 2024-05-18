@@ -1,8 +1,8 @@
 "use client";
 // External Dependencies
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Prompts } from "@prisma/client";
+import { type Prompts } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 // Relative Dependencies

@@ -1,9 +1,9 @@
 // External Dependencies
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 import { encode } from "gpt-tokenizer";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import Groq from "groq-sdk";
-import { CompletionCreateParams } from "groq-sdk/resources/chat/completions.mjs";
+import { type CompletionCreateParams } from "groq-sdk/resources/chat/completions.mjs";
 
 // Relative Dependencies
 import { db } from "~/server/db";
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     });
 
     const contextWindowSize = chat?.Models?.context_window || 16385;
-    let messages: CompletionCreateParams.Message[] = [];
+    const messages: CompletionCreateParams.Message[] = [];
     let tokensUsed = 0;
 
     const newMessageTokens = encode(message).length;
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
     ) {
       const nextMessage = existingMessages[curMessageIndex];
       const nextMessageTokens = encode(
-        (nextMessage as Messages).content,
+        (nextMessage!).content,
       ).length;
 
       tokensUsed += nextMessageTokens;
@@ -155,7 +155,7 @@ export async function POST(request: Request) {
 
     return new StreamingTextResponse(stream);
   } catch (error: any) {
-    let errorMessage = error.message || "An unexpected error occurred";
+    const errorMessage = error.message || "An unexpected error occurred";
     const errorCode = error.status || 500;
 
     return new Response(JSON.stringify({ message: errorMessage }), {

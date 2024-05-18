@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { Chats, Projects } from "@prisma/client";
+import { type Chats, type Projects } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

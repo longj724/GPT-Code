@@ -1,9 +1,9 @@
 "use client";
 // External Dependencies
 import { useCallback, useRef, useState } from "react";
-import { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { forwardRef, useEffect } from "react";
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 
 // Relative Dependencies
 import ChatMessage from "./ChatMessage";

@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const modelToNameMap: { [key: number]: string } = {
+export const modelToNameMap: Record<number, string> = {
   1: "GPT-3.5-Turbo",
   2: "GPT-4-Turbo",
   3: "LLaMA3 8b",
@@ -18,7 +18,7 @@ export const modelToNameMap: { [key: number]: string } = {
   6: "Gemma 7b",
 };
 
-export const modelNameToIDMap: { [key: string]: number } = {
+export const modelNameToIDMap: Record<string, number> = {
   "GPT-3.5-Turbo": 1,
   "GPT-4-Turbo": 2,
   "LLaMA3 8b": 3,
@@ -27,7 +27,7 @@ export const modelNameToIDMap: { [key: string]: number } = {
   "Gemma 7b": 6,
 };
 
-export const modelDisplayNameToNameMap: { [key: string]: string } = {
+export const modelDisplayNameToNameMap: Record<string, string> = {
   "GPT-3.5-Turbo": "gpt-3.5-turbo",
   "GPT-4-Turbo": "gpt-4-turbo",
   "LLaMA3 8b": "llama3-8b-8192",
@@ -41,7 +41,7 @@ const key: Buffer = crypto.randomBytes(32);
 
 export const encrypt = (text: string) => {
   const iv: Buffer = crypto.randomBytes(16);
-  let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+  const cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
   let encrypted = cipher.update(text);
   encrypted = Buffer.concat([encrypted, cipher.final()]);
   return { iv: iv.toString("hex"), encryptedData: encrypted.toString("hex") };
@@ -53,9 +53,9 @@ export type DecryptionInput = {
 };
 
 export const decrypt = (text: DecryptionInput) => {
-  let decryptiv = Buffer.from(text.iv, "hex");
-  let encryptedText = Buffer.from(text.encryptedData, "hex");
-  let decipher = crypto.createDecipheriv(
+  const decryptiv = Buffer.from(text.iv, "hex");
+  const encryptedText = Buffer.from(text.encryptedData, "hex");
+  const decipher = crypto.createDecipheriv(
     algorithm,
     Buffer.from(key),
     decryptiv,

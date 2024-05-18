@@ -1,5 +1,5 @@
 // External Dependencies
-import { FC, memo } from "react";
+import { type FC, memo } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
@@ -13,9 +13,7 @@ interface MessageCodeBlockProps {
   value: string;
 }
 
-interface languageMap {
-  [key: string]: string | undefined;
-}
+type languageMap = Record<string, string | undefined>;
 
 export const programmingLanguages: languageMap = {
   javascript: ".js",

@@ -1,7 +1,7 @@
 "use client";
 // External Dependencies
 import { Check, Copy } from "lucide-react";
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useUser } from "@clerk/nextjs";

@@ -1,7 +1,7 @@
 "use client";
 // External Dependencies
 import { useRef, useState } from "react";
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 

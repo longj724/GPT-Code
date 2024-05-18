@@ -1,5 +1,5 @@
 // External Dependencies
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 
 // Relative Dependencies
 import { db } from "~/server/db";
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     return new Response(JSON.stringify(response));
   } catch (error: any) {
-    let errorMessage = error.message || "An unexpected error occurred";
+    const errorMessage = error.message || "An unexpected error occurred";
     const errorCode = error.status || 500;
 
     return new Response(JSON.stringify({ message: errorMessage }), {

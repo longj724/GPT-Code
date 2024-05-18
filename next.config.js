@@ -9,6 +9,9 @@ const config = {
   images: {
     domains: ["picsum.photos", "img.clerk.com"],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 export default config;

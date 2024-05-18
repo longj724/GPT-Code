@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { Chats, Projects } from "@prisma/client";
+import { type Chats, type Projects } from "@prisma/client";
 
 // Relative Dependencies
 import { cn, modelToNameMap } from "~/lib/utils";

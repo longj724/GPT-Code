@@ -2,9 +2,9 @@
 // External Dependencies
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { CircleStop, Paperclip, Send } from "lucide-react";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
 // Relative Dependencies
@@ -60,7 +60,7 @@ const ChatInput = ({
       data: ReadableStreamDefaultReader<Uint8Array> | undefined,
     ) => {
       setUserInput("");
-      let newMessage: Messages = {
+      const newMessage: Messages = {
         id: uuidv4(),
         created_at: new Date(),
         type: "assistant",
@@ -84,13 +84,13 @@ const ChatInput = ({
           if (value) {
             if (firstPass) {
               newMessage.content = decodedValue;
-              setMessages((prev) => [...(prev as Messages[]), newMessage]);
+              setMessages((prev) => [...(prev!), newMessage]);
               firstPass = false;
             } else {
               setMessages((prev: Messages[] | null) => {
                 if (prev) {
                   const existingMessages = prev.slice(0, -1);
-                  const lastMessage = prev[prev.length - 1] as Messages;
+                  const lastMessage = prev[prev.length - 1]!;
                   const updatedLastMessage = {
                     ...lastMessage,
                     content: lastMessage.content + decodedValue,
@@ -153,9 +153,9 @@ const ChatInput = ({
     sendMessage(message);
   };
 
-  const updateUserMessageOptimistically = (prompt: string = "") => {
+  const updateUserMessageOptimistically = (prompt = "") => {
     // UUID will be different then created on the db but I don't think it matters
-    let newUserQuestion: Messages = {
+    const newUserQuestion: Messages = {
       id: uuidv4(),
       created_at: new Date(),
       type: "user",
@@ -163,7 +163,7 @@ const ChatInput = ({
       chat_id: (chatID as string) ?? "",
     };
 
-    setMessages((prev) => [...(prev as Messages[]), newUserQuestion]);
+    setMessages((prev) => [...(prev!), newUserQuestion]);
 
     if (messageContainerRef.current) {
       (

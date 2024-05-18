@@ -1,7 +1,7 @@
 // External Dependencies
-import { Messages } from "@prisma/client";
+import { type Messages } from "@prisma/client";
 import { encode } from "gpt-tokenizer";
-import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import { type ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { OpenAIStream, StreamingTextResponse } from "ai";
 import { OpenAI as openai } from "openai";
 
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
   });
 
   const contextWindowSize = chat?.Models?.context_window || 16385;
-  let messages: ChatCompletionMessageParam[] = [];
+  const messages: ChatCompletionMessageParam[] = [];
   let tokensUsed = 0;
 
   const newMessageTokens = encode(message).length;
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
     !chat?.exclude_prior_messages
   ) {
     const nextMessage = existingMessages[curMessageIndex];
-    const nextMessageTokens = encode((nextMessage as Messages).content).length;
+    const nextMessageTokens = encode((nextMessage!).content).length;
 
     tokensUsed += nextMessageTokens;
 

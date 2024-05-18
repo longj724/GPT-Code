@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ChevronUp, FilePenLine, Send, SquarePlus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
-import { Prompts } from "@prisma/client";
+import { type Prompts } from "@prisma/client";
 
 // Relative Dependencies
 import {
@@ -112,7 +112,7 @@ const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
       <CreatePromptModal
         open={isCreatePromptOpen}
         setOpen={setIsCreatePromptOpen}
-        userID={user?.id as string}
+        userID={user?.id!}
       />
       {prompts?.map(({ id }) => (
         <EditPromptModal
@@ -120,7 +120,7 @@ const MessagePromptsMenu = ({ userInput, sendMessageWithPrompt }: Props) => {
           isOpen={isEditPromptOpen}
           promptID={id}
           setIsOpen={setIsEditPromptOpen}
-          userID={user?.id as string}
+          userID={user?.id!}
         />
       ))}
     </>

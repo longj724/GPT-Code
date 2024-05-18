@@ -1,7 +1,7 @@
 import { Toaster } from "~/components/ui/sonner";
 import { Providers } from "~/components/utility/providers";
 import { Inter } from "next/font/google";
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import "../styles/globals.css";
 import Sidebar from "./_components/Sidebar";
 

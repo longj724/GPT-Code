@@ -1,5 +1,5 @@
 // External Dependencies
-import { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { useQueryParam, StringParam, withDefault } from "use-query-params";
 import { useQuery } from "@tanstack/react-query";
 import { useUser } from "@clerk/nextjs";
@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
-import { UserProfileResponse } from "./modals/EditApiKeysModal";
+import { type UserProfileResponse } from "./modals/EditApiKeysModal";
 
 type Props = {
   setChangedModel: Dispatch<SetStateAction<boolean>>;

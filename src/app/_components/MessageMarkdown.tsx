@@ -54,7 +54,7 @@ const MessageMarkdown = ({ content }: Props) => {
           return (
             <MessageCodeBlock
               key={Math.random()}
-              language={(match && match[1]) || ""}
+              language={(match?.[1]) || ""}
               value={String(childArray).replace(/\n$/, "")}
               {...props}
             />

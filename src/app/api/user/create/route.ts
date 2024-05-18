@@ -1,7 +1,7 @@
 // External Dependencies
 import { Webhook } from "svix";
 import { headers } from "next/headers";
-import { WebhookEvent } from "@clerk/nextjs/server";
+import { type WebhookEvent } from "@clerk/nextjs/server";
 
 // Relative Dependencies
 import { db } from "~/server/db";
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     // Create a new user
     await db.users.create({
       data: {
-        id: id as string,
+        id: id!,
         created_at: new Date(),
       },
     });
@@ -62,14 +62,14 @@ export async function POST(req: Request) {
     await db.prompts.create({
       data: {
         content: "Explain this error",
-        user_id: id as string,
+        user_id: id!,
       },
     });
 
     await db.prompts.create({
       data: {
         content: "Explain these lines of code",
-        user_id: id as string,
+        user_id: id!,
       },
     });
 
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
       status: 200,
     });
   } catch (error: any) {
-    let errorMessage = error.message || "An unexpected error occurred";
+    const errorMessage = error.message || "An unexpected error occurred";
     const errorCode = error.status || 500;
 
     return new Response(JSON.stringify({ message: errorMessage }), {

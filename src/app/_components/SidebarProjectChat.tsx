@@ -1,7 +1,7 @@
 // External Dependencies
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Chats } from "@prisma/client";
+import { type Chats } from "@prisma/client";
 
 // Relative Dependencies
 import { cn, modelToNameMap } from "~/lib/utils";

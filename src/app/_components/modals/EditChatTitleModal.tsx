@@ -2,7 +2,7 @@
 // External Dependencies
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { Chats } from "@prisma/client";
+import { type Chats } from "@prisma/client";
 import { FilePenLine } from "lucide-react";
 import { useRouter } from "next/navigation";
 
