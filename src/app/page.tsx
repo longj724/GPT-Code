@@ -10,7 +10,7 @@ const NoChatSelected = async () => {
 
   return !user ? (
     <div className="flex flex-col items-center justify-center gap-6">
-      <h1 className=" text-3xl">Welcome to CodeGPT</h1>
+      <h1 className=" text-3xl">Welcome to GPT Code</h1>
       <SignIn redirectUrl="/" />
       {/* TODO: Will open up a modal that shows a demo video */}
       <Button>Watch Demo</Button>
