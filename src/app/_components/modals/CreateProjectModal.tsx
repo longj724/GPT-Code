@@ -30,7 +30,7 @@ import {
   FormMessage,
 } from "~/components/ui/form";
 import { Textarea } from "~/components/ui/textarea";
-import { modelToNameMap } from "~/lib/utils";
+import { modelNameToDisplayNameMap } from "~/lib/utils";
 
 const formSchema = z.object({
   name: z.string(),
@@ -65,7 +65,7 @@ const CreateProjectModal = () => {
       const { project, chat } = data;
       setOpen(false);
       router.push(
-        `/chat/${project.id}/${chat.id}?chat_name=${chat.name}&model=${modelToNameMap[chat.model_id]}`,
+        `/chat/${project.id}/${chat.id}?chat_name=${chat.name}&model=${modelNameToDisplayNameMap[chat.model_name]}`,
       );
       router.refresh();
     },

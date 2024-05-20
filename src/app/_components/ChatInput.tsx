@@ -11,7 +11,11 @@ import { v4 as uuidv4 } from "uuid";
 import { Input } from "~/components/ui/input";
 import { TextareaAutosize } from "~/components/ui/textarea-autosize";
 import MessagePromptsMenu from "./MessagePromptsMenu";
-import { cn, modelIDToChatEndpoint } from "~/lib/utils";
+import {
+  cn,
+  modelNameToChatEndpoint,
+  modelDisplayNameToNameMap,
+} from "~/lib/utils";
 
 type Props = {
   changedModel: boolean;
@@ -38,7 +42,7 @@ const ChatInput = ({
   const { mutate: sendMessage } = useMutation({
     mutationFn: async (message?: string) => {
       if (!model) return;
-      const chatEndpoint = modelIDToChatEndpoint(model);
+      const chatEndpoint = modelNameToChatEndpoint(model);
 
       const response = await fetch(chatEndpoint, {
         method: "POST",
@@ -46,7 +50,7 @@ const ChatInput = ({
           message: message || userInput,
           chatID,
           projectID,
-          model,
+          modelName: modelDisplayNameToNameMap[model],
         }),
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +88,7 @@ const ChatInput = ({
           if (value) {
             if (firstPass) {
               newMessage.content = decodedValue;
-              setMessages((prev) => [...(prev!), newMessage]);
+              setMessages((prev) => [...prev!, newMessage]);
               firstPass = false;
             } else {
               setMessages((prev: Messages[] | null) => {
@@ -163,7 +167,7 @@ const ChatInput = ({
       chat_id: (chatID as string) ?? "",
     };
 
-    setMessages((prev) => [...(prev!), newUserQuestion]);
+    setMessages((prev) => [...prev!, newUserQuestion]);
 
     if (messageContainerRef.current) {
       (

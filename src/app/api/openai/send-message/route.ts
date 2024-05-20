@@ -1,5 +1,4 @@
 // External Dependencies
-import { type Messages } from "@prisma/client";
 import { encode } from "gpt-tokenizer";
 import { type ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { OpenAIStream, StreamingTextResponse } from "ai";
@@ -7,10 +6,9 @@ import { OpenAI as openai } from "openai";
 
 // Relative Dependencies
 import { db } from "~/server/db";
-import { modelDisplayNameToNameMap, modelNameToIDMap } from "~/lib/utils";
 
 export async function POST(request: Request) {
-  const { message, model, chatID, projectID } = await request.json();
+  const { message, modelName, chatID, projectID } = await request.json();
 
   // Can probably make this more efficient to not udpate a chat and then fetch it again
   const chat = await db.chats.findUnique({
@@ -22,13 +20,13 @@ export async function POST(request: Request) {
     },
   });
 
-  if (chat?.model_id !== modelNameToIDMap[model]) {
+  if (chat?.model_name !== modelName) {
     await db.chats.update({
       where: {
         id: chatID,
       },
       data: {
-        model_id: modelNameToIDMap[model],
+        model_name: modelName,
       },
     });
   }
@@ -91,7 +89,7 @@ export async function POST(request: Request) {
     !chat?.exclude_prior_messages
   ) {
     const nextMessage = existingMessages[curMessageIndex];
-    const nextMessageTokens = encode((nextMessage!).content).length;
+    const nextMessageTokens = encode(nextMessage!.content).length;
 
     tokensUsed += nextMessageTokens;
 
@@ -132,7 +130,7 @@ export async function POST(request: Request) {
   });
 
   const completion = await OpenAI.chat.completions.create({
-    model: modelDisplayNameToNameMap[model] || "gpt-3.5-turbo",
+    model: modelName || "gpt-3.5-turbo",
     messages: messages,
     stream: true,
   });

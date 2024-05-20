@@ -22,7 +22,7 @@ const NoMessages = ({ setChangedModel }: Props) => {
   const { user } = useUser();
   const [_, setModel] = useQueryParam(
     "model",
-    withDefault(StringParam, "GPT-3.5-Turbo"),
+    withDefault(StringParam, "GPT-3.5 Turbo"),
   );
 
   const { data: userProfile } = useQuery({
@@ -54,20 +54,28 @@ const NoMessages = ({ setChangedModel }: Props) => {
         </SelectTrigger>
         <SelectContent>
           <SelectItem
-            value="GPT-3.5-Turbo"
+            value="GPT-3.5 Turbo"
             disabled={!userProfile?.user.OpenAIKeys?.key}
             className="hover:cursor-pointer"
           >
-            GPT-3.5-Turbo{" "}
+            GPT-3.5 Turbo{" "}
             {!userProfile?.user.OpenAIKeys?.key && "No OpenAI API Key Added"}
           </SelectItem>
           <SelectItem
             disabled={!userProfile?.user.OpenAIKeys?.key}
-            value="GPT-4-Turbo"
+            value="GPT-4o"
             className="hover:cursor-pointer"
           >
-            GPT-4-Turbo{" "}
-            {!userProfile?.user.OpenAIKeys.key && "No OpenAI API Key Added"}
+            GPT-4o{" "}
+            {!userProfile?.user.OpenAIKeys?.key && "No OpenAI API Key Added"}
+          </SelectItem>
+          <SelectItem
+            disabled={!userProfile?.user.OpenAIKeys?.key}
+            value="GPT-4 Turbo"
+            className="hover:cursor-pointer"
+          >
+            GPT-4 Turbo{" "}
+            {!userProfile?.user.OpenAIKeys?.key && "No OpenAI API Key Added"}
           </SelectItem>
           <SelectItem
             disabled={!userProfile?.user.GroqKeys?.key}

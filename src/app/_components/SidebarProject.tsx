@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { type Chats, type Projects } from "@prisma/client";
 
 // Relative Dependencies
-import { cn, modelToNameMap } from "~/lib/utils";
+import { cn, modelNameToDisplayNameMap } from "~/lib/utils";
 import SidebarProjectChat from "./SidebarProjectChat";
 import { Button } from "~/components/ui/button";
 import ProjectMenu from "./ProjectMenu";
@@ -37,9 +37,9 @@ const SidebarProject = ({ project }: Props) => {
 
       return (await response.json()) as Chats;
     },
-    onSuccess: ({ project_id, id, model_id, name }) => {
+    onSuccess: ({ project_id, id, model_name, name }) => {
       router.push(
-        `/chat/${project_id}/${id}/?project_name=${name}&model=${modelToNameMap[model_id]}`,
+        `/chat/${project_id}/${id}/?project_name=${name}&model=${modelNameToDisplayNameMap[model_name]}`,
       );
       router.refresh();
     },

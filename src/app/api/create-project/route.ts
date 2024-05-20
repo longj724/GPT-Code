@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       data: {
         name: "Untitled",
         project_id: projectResponse.id,
-        model_id: 1,
+        model_name: "gpt-3.5-turbo",
       },
     });
 

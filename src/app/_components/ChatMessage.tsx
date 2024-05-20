@@ -30,7 +30,11 @@ const ChatMessage = ({ message }: Props) => {
   };
 
   const getModelLogo = () => {
-    if (model === "GPT-3.5-Turbo" || model === "GPT-4-Turbo") {
+    if (
+      model === "GPT-3.5 Turbo" ||
+      model === "GPT-4 Turbo" ||
+      model === "GPT-4o"
+    ) {
       return "/ChatGPTImage.png";
     } else if (model === "Mixtral 8x7b") {
       return "/MixtralLogo.png";

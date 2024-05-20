@@ -15,10 +15,10 @@ model Chats {
   created_at             DateTime   @default(now()) @db.Timestamptz(6)
   name                   String
   thread_id              String?
-  model_id               Int        @default(1)
+  model_name             String     @default("gpt-3.5-turbo")
   project_id             String     @db.Uuid
   exclude_prior_messages Boolean    @default(false)
-  Models                 Models?    @relation(fields: [model_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  Models                 Models?    @relation(fields: [model_name], references: [name], onDelete: NoAction, onUpdate: NoAction)
   Projects               Projects   @relation(fields: [project_id], references: [id], onDelete: Cascade)
   Messages               Messages[]
 
@@ -39,9 +39,9 @@ model Messages {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model Models {
-  id             Int      @id @default(autoincrement())
+  id             Int      @default(autoincrement())
   created_at     DateTime @default(now()) @db.Timestamptz(6)
-  name           String
+  name           String   @id
   display_name   String?
   context_window Int
   Chats          Chats[]

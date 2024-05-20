@@ -9,31 +9,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const modelToNameMap: Record<number, string> = {
-  1: "GPT-3.5-Turbo",
-  2: "GPT-4-Turbo",
-  3: "LLaMA3 8b",
-  4: "LLaMA3 70b",
-  5: "Mixtral 8x7b",
-  6: "Gemma 7b",
-};
-
-export const modelNameToIDMap: Record<string, number> = {
-  "GPT-3.5-Turbo": 1,
-  "GPT-4-Turbo": 2,
-  "LLaMA3 8b": 3,
-  "LLaMA3 70b": 4,
-  "Mixtral 8x7b": 5,
-  "Gemma 7b": 6,
-};
-
 export const modelDisplayNameToNameMap: Record<string, string> = {
-  "GPT-3.5-Turbo": "gpt-3.5-turbo",
-  "GPT-4-Turbo": "gpt-4-turbo",
+  "GPT-3.5 Turbo": "gpt-3.5-turbo",
+  "GPT-4 Turbo": "gpt-4-turbo",
+  "GPT-4o": "gpt-4o",
   "LLaMA3 8b": "llama3-8b-8192",
   "LLaMA3 70b": "llama3-70b-8192",
   "Mixtral 8x7b": "mixtral-8x7b-32768",
   "Gemma 7b": "gemma-7b-it",
+};
+
+export const modelNameToDisplayNameMap: Record<string, string> = {
+  "gpt-3.5-turbo": "GPT-3.5 Turbo",
+  "gpt-4-turbo": "GPT-4 Turbo",
+  "gpt-4o": "GPT-4o",
+  "llama3-8b-8192": "LLaMA3 8b",
+  "llama3-70b-8192": "LLaMA3 70b",
+  "mixtral-8x7b-32768": "Mixtral 8x7b",
+  "gemma-7b-it": "Gemma 7b",
 };
 
 const algorithm = "aes-256-cbc";
@@ -65,17 +58,17 @@ export const decrypt = (text: DecryptionInput) => {
   return decrypted.toString();
 };
 
-export const modelIDToChatEndpoint = (modelName: string) => {
-  const modelID = modelNameToIDMap[modelName];
-  switch (modelID) {
-    case 1:
-    case 2:
+export const modelNameToChatEndpoint = (modelDisplayName: string) => {
+  const modelName = modelDisplayNameToNameMap[modelDisplayName];
+  switch (modelName) {
+    case "gpt-3.5-turbo":
+    case "gpt-4-turbo":
+    case "gpt-4o":
       return "/api/openai/send-message";
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
+    case "llama3-8b-8192":
+    case "llama3-70b-8192":
+    case "mixtral-8x7b-32768":
+    case "gemma-7b-it":
       return "/api/groq/send-message";
     default:
       return "/api/openai/send-message";
