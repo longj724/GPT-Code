@@ -7,7 +7,7 @@ await import("./src/env.js");
 /** @type {import("next").NextConfig} */
 const config = {
   images: {
-    domains: ["picsum.photos", "img.clerk.com"],
+    domains: ["picsum.photos", "img.clerk.com", "utfs.io"],
   },
   eslint: {
     ignoreDuringBuilds: true,

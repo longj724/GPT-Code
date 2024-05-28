@@ -35,11 +35,11 @@ const ChatMessage = ({ message }: Props) => {
       model === "GPT-4 Turbo" ||
       model === "GPT-4o"
     ) {
-      return "/ChatGPTImage.png";
+      return "https://utfs.io/f/011ccb66-ae35-4419-b2fd-51ef9175f637-mj83aa.png";
     } else if (model === "Mixtral 8x7b") {
-      return "/MixtralLogo.png";
+      return "https://utfs.io/f/03683c6c-b30c-4f90-8e22-7b7335e6bd09-frsh8w.png";
     } else {
-      return "/LlamaLogo.jpeg";
+      return "https://utfs.io/f/5d86278f-f1a9-470f-8613-fe8dc1d102a0-q2n0kg.jpeg";
     }
   };
 
